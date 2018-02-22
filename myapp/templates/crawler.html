@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% block content %}
+        <div class="post">
+              <h1 class="my-4">Crawler
+              </h1>
+               <div>
+                <p >
+                   
+                    
+                {% if is_crawling == 1 %}
+                <h4>
+                Crawler is running...
+                </h4>
+                <button class="btn"  onclick="window.location.href='/crawl/stop'" type="button">Stop Crawling</button>
+                {% else %} 
+                
+                <div style="width:300px"> 
+                <p>
+                     <label for="crawler_option">Crawl keyword:  </label>
+                    <input type="text" class="form-control" id="crawl_keyword">
+                </p>
+                
+                <p>
+                     <label for="crawler_option">Crawler options:  </label>
+                        <select id="crawl_option"  class="form-control">
+                         <option  value="gdr">Glassdoor Reviews</option>
+                         <option value="gdi">Glassdoor Interview Questions</option>
+                       </select>
+                </p>
+                </div>
+                
+                <p>
+                <button class="btn btn-primary" id="btn_start_crawl"  onclick="onclick_start_crawling()" type="button">Start Crawling</button>
+                 <script>
+                    function onclick_start_crawling() {
+                        var e = document.getElementById("crawl_option");
+                        var crawl_option = e.options[e.selectedIndex].value;
+                        var crawl_keyword = document.getElementById("crawl_keyword").value;
+                        $.get("/crawl/start",
+                            {
+                                crawl_keyword: crawl_keyword,
+                                crawl_option: crawl_option
+                            },
+                            function(data, status){
+                        });
+                        document.getElementById("btn_start_crawl").innerText= "Starting ...";
+                        setTimeout(function(){
+                            window.location.href = "/crawl";
+                            
+                        }, 5000);
+                    }
+                </script>
+                </p>
+                
+                {% endif %}
+               
+                </p>
+                
+              </div>
+        </div>
+{% endblock %}
