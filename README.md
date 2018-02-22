@@ -8,5 +8,5 @@ http://127.0.0.1:8000/
 
 Modules:
 myapp  (webapp module)
-glassdoor  (crawler module)
+glassdoor,  (crawler module)
 
