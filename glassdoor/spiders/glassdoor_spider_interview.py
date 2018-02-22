@@ -80,35 +80,69 @@ class GlassdoorSpider(scrapy.Spider):
             
         
     def parse_companies_list(self, response):
-        list_of_company_url = []
-        for quote in response.css('div.margBotXs'):
-            company_name = quote.css('a.tightAll::text').extract_first()
-            href =  quote.css('a.tightAll::attr(href)').extract_first()
-            url = ('https://www.glassdoor.com'+href)
-            list_of_company_url.append(url)
-        next_url = response.css('li.next').css('a::attr(href)').extract_first()
-        
-        url = self.pop_url()
-        
-        if not (next_url is None):
-            next_url = 'https://www.glassdoor.com'+next_url
-            self.push_url('1 '+next_url)
-        for coy_url in list_of_company_url:
-            self.push_url('2 '+coy_url)
-        
-        url = self.peek_url()
-        if not (url is None):
-            url_arr = url.split(" ")
-            if(url_arr[0]=='1'):
-                yield scrapy.Request(url=url_arr[1], callback=self.parse_companies_list)
-            if(url_arr[0]=='2'):  
-                yield scrapy.Request(url=url_arr[1], callback=self.parse_company_detail) 
-            if(url_arr[0]=='3'):
-                yield scrapy.Request(url=url_arr[1], callback=self.parse_company_interview)
-        else:
-            os.remove("crawling.txt")
-        
+        if response.css('title::text').extract_first().find('Working at') == -1:
+            list_of_company_url = []
+            for quote in response.css('div.margBotXs'):
+                company_name = quote.css('a.tightAll::text').extract_first()
+                href =  quote.css('a.tightAll::attr(href)').extract_first()
+                url = ('https://www.glassdoor.com'+href)
+                list_of_company_url.append(url)
+            next_url = response.css('li.next').css('a::attr(href)').extract_first()
             
+            url = self.pop_url()
+            
+            if not (next_url is None):
+                next_url = 'https://www.glassdoor.com'+next_url
+                self.push_url('1 '+next_url)
+            for coy_url in list_of_company_url:
+                self.push_url('2 '+coy_url)
+            
+            url = self.peek_url()
+            if not (url is None):
+                url_arr = url.split(" ")
+                if(url_arr[0]=='1'):
+                    yield scrapy.Request(url=url_arr[1], callback=self.parse_companies_list)
+                if(url_arr[0]=='2'):  
+                    yield scrapy.Request(url=url_arr[1], callback=self.parse_company_detail) 
+                if(url_arr[0]=='3'):
+                    yield scrapy.Request(url=url_arr[1], callback=self.parse_company_interview)
+            else:
+                os.remove("crawling.txt")
+        else:
+            company_name = response.css('div.header.cell.info').css('h1.strong.tightAll::text').extract_first().strip()
+            logo = response.css('span.sqLogo.tighten.lgSqLogo.logoOverlay').css('img::attr(src)').extract_first()
+            video = response.css('div.featured-video::attr(data-video-url)').extract_first()
+            website = response.xpath('//div[@class=\'infoEntity\']//a[@class=\'link\']/text()').extract_first()
+            headquarter = response.xpath('//div[@class=\'infoEntity\' and label/text()[1]=\'Headquarters\']/span[@class=\'value\']/text()').extract_first()
+            size = response.xpath('//div[@class=\'infoEntity\' and label/text()[1]=\'Size\']/span[@class=\'value\']/text()').extract_first()
+            founded = response.xpath('//div[@class=\'infoEntity\' and label/text()[1]=\'Founded\']/span[@class=\'value\']/text()').extract_first()
+            type = response.xpath('//div[@class=\'infoEntity\' and label/text()[1]=\'Type\']/span[@class=\'value\']/text()').extract_first()
+            industry = response.xpath('//div[@class=\'infoEntity\' and label/text()[1]=\'Industry\']/span[@class=\'value\']/text()').extract_first()
+            revenue = response.xpath('//div[@class=\'infoEntity\' and label/text()[1]=\'Revenue\']/span[@class=\'value\']/text()').extract_first()
+            competitors = response.xpath('//div[@class=\'infoEntity\' and label/text()[1]=\'Competitors\']/span[@class=\'value\']/text()').extract_first()
+            
+            data = {'company_name':company_name,'logo':logo,'video':video,'website':website,'headquarter':headquarter,'size':size,
+            'founded':founded,'type':type,'industry':industry,'revenue':revenue,'competitors':competitors}
+                
+            file = open('crawled_data/Company/'+company_name+'.json', 'w')
+            json.dump(data, file)
+            file.close()
+       
+            interview_url = response.css('a.interviews::attr(href)').extract_first()
+            interview_url = 'https://www.glassdoor.com'+interview_url
+            url = self.pop_url()
+            self.push_url('3 '+interview_url)
+            url = self.peek_url()
+            if not (url is None):
+                url_arr = url.split(" ")
+                if(url_arr[0]=='1'):
+                    yield scrapy.Request(url=url_arr[1], callback=self.parse_companies_list)
+                if(url_arr[0]=='2'):  
+                    yield scrapy.Request(url=url_arr[1], callback=self.parse_company_detail) 
+                if(url_arr[0]=='3'):
+                    yield scrapy.Request(url=url_arr[1], callback=self.parse_company_interview)
+            else:
+                os.remove("crawling.txt")
     def parse_company_detail(self, response):
         company_name = response.css('div.header.cell.info').css('h1.strong.tightAll::text').extract_first().strip()
         logo = response.css('span.sqLogo.tighten.lgSqLogo.logoOverlay').css('img::attr(src)').extract_first()
