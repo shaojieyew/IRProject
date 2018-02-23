@@ -1,5 +1,7 @@
 # IRProject
 
+Webapp build with Danjago framework
+
 To start server:
 python manage.py runserver
 
