@@ -10,3 +10,4 @@ Modules:
 myapp  (webapp module),
 glassdoor  (crawler module)
 
+Sample crawled data: https://goo.gl/hQQFuH
