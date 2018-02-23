@@ -7,7 +7,7 @@ import json
 import os
 
 class GlassdoorSpider(scrapy.Spider):
-    name = "company_interview"
+    name = "glassdoor_company_interview"
     def start_requests(self):  
         o_url ='https://www.glassdoor.com/Reviews/singapore-reviews-SRCH_IL.0,9_IM1123_IP1.htm'
         if hasattr(self, 'keyword'):
@@ -124,10 +124,14 @@ class GlassdoorSpider(scrapy.Spider):
             data = {'company_name':company_name,'logo':logo,'video':video,'website':website,'headquarter':headquarter,'size':size,
             'founded':founded,'type':type,'industry':industry,'revenue':revenue,'competitors':competitors}
                 
-            file = open('crawled_data/Company/'+company_name+'.json', 'w')
+      
+            fileLocation = 'crawled_data/glassdoor_company'
+            if not os.path.exists(fileLocation):
+                os.makedirs(fileLocation)    
+            file = open(fileLocation+'/'+company_name+'.json', 'w')
             json.dump(data, file)
             file.close()
-       
+            
             interview_url = response.css('a.interviews::attr(href)').extract_first()
             interview_url = 'https://www.glassdoor.com'+interview_url
             url = self.pop_url()
@@ -159,10 +163,13 @@ class GlassdoorSpider(scrapy.Spider):
         data = {'company_name':company_name,'logo':logo,'video':video,'website':website,'headquarter':headquarter,'size':size,
         'founded':founded,'type':type,'industry':industry,'revenue':revenue,'competitors':competitors}
             
-        file = open('crawled_data/Company/'+company_name+'.json', 'w')
+        fileLocation = 'crawled_data/glassdoor_company'
+        if not os.path.exists(fileLocation):
+            os.makedirs(fileLocation)    
+        file = open(fileLocation+'/'+company_name+'.json', 'w')
         json.dump(data, file)
         file.close()
-   
+        
         interview_url = response.css('a.interviews::attr(href)').extract_first()
         interview_url = 'https://www.glassdoor.com'+interview_url
         url = self.pop_url()
@@ -206,9 +213,14 @@ class GlassdoorSpider(scrapy.Spider):
                         if (result3 is None):
                             result3 = result
     
+            review_id = link.split("/")[-1]
+            data = {'review_id':review_id,'company_name':company_name,'datetime':datetime,'title':title,'link':('https://www.glassdoor.com'+link),'location':location,'interview_details':interview_details,'interview_question':interview_question,'result1':result1,'result2':result2,'result3':result3}
             
-            data = {'company_name':company_name,'datetime':datetime,'title':title,'link':('https://www.glassdoor.com'+link),'location':location,'interview_details':interview_details,'interview_question':interview_question,'result1':result1,'result2':result2,'result3':result3}
-            file = open('crawled_data'+link+'.json', 'w')
+            fileLocation = 'crawled_data/glassdoor_interview'
+            if not os.path.exists(fileLocation):
+                os.makedirs(fileLocation)
+            
+            file = open(fileLocation+'/'+review_id+'.json', 'w')
             json.dump(data, file)
             file.close()
         url = self.pop_url()

@@ -28,9 +28,11 @@ class CrawlerView(TemplateView):
         keyword.strip()
         crawler = None
         if(request.GET.get("crawl_option")=='gdr'):
-            crawler = 'company_review'
-        else:
-            crawler = 'company_interview'
+            crawler = 'glassdoor_company_review'
+        if(request.GET.get("crawl_option")=='gdi'):
+            crawler = 'glassdoor_company_interview'
+        if(request.GET.get("crawl_option")=='idr'):
+            crawler = 'indeed_company_review'
             
         if(len(keyword)>0):
             os.system("scrapy crawl "+crawler+" -a keyword="+keyword)
