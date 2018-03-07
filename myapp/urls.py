@@ -29,4 +29,7 @@ urlpatterns = [
     
 	url(r'^indexing$',  indexing.IndexingView.index, name='index'),
 	url(r'^indexing/start$',  indexing.IndexingView.start_indexing, name='start_indexing'),
+	url(r'^indexing/isindexing$',  indexing.IndexingView.is_indexing, name='is_indexing'),
+	url(r'^indexing/stop$',  indexing.IndexingView.stop_indexing, name='stop_indexing'),
+	url(r'^indexing/files$',  indexing.IndexingView.get_files, name='get_files'),
 ]

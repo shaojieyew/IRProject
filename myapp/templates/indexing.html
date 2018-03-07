@@ -6,35 +6,39 @@
                <div>
                 <p >
                 <p>
-                    <button class="btn btn-primary" id="btn_start_indexing"  onclick="onclick_btn_start_indexing()" type="button">Start Indexing</button>
-                    <button class="btn btn-danger" id="btn_delete_all_index"  onclick="onclick_btn_delete_all_index()" type="button">Delete All Index</button>
-                    <script>
-                    function onclick_btn_start_indexing() {
-                        window.location.href = "/indexing/start";
-                    }
-                    function onclick_btn_delete_all_index() {
-                        /*                       
-                       var e = document.getElementById("crawl_option");
-                        var crawl_option = e.options[e.selectedIndex].value;
-                        var crawl_keyword = document.getElementById("crawl_keyword").value;
-                        $.get("/crawl/start",
-                            {
-                                crawl_keyword: crawl_keyword,
-                                crawl_option: crawl_option
-                            },
-                            function(data, status){
-                        });
-                        document.getElementById("btn_start_crawl").innerText= "Starting ...";
-                        document.getElementById("btn_start_crawl").disabled = true;
-                        setTimeout(function(){
-                            window.location.href = "/crawl";
-                            
-                        }, 10000);
-                        */
+                    {% if status == 'indexing' %}
+                    <h4>
+                    We are indexing ...
+                    </h4>
+                    <button class="btn btn-danger" id="btn_stop_indexing"  onclick="onclick_btn_stop_indexing()" type="button">Stop Indexing</button>
+                         <script>
+                 
+                    
+                    function onclick_btn_stop_indexing() {
+                        window.location.href = "/indexing/stop";
                     }
                 </script>
-                </p>
+                    {% else %} 
                 
+                    <button class="btn btn-primary" id="btn_start_indexing"  onclick="onclick_btn_start_indexing()" type="button">Start Indexing</button>
+                    <script>
+                    function onclick_btn_start_indexing() {
+                        $.get("/indexing/start",{},
+                            function(data, status){
+                        });
+                        document.getElementById("btn_start_indexing").innerText= "Starting ...";
+                        document.getElementById("btn_start_indexing").disabled = true;
+                        setTimeout(function(){
+                            window.location.href = "/indexing";
+                            
+                        }, 2000);
+                        
+                    }
+                </script>
+                
+                
+                {% endif %}
+                </p>
                 </p>
                 
               </div>

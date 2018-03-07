@@ -1,9 +1,10 @@
 from stanfordcorenlp import StanfordCoreNLP
 from nltk.stem import PorterStemmer
 import re
+from django.conf import settings
 
 class PreprocessPipeline:
-    Stanford_corenlp_lib = r'C:\Users\ShaoJie\Desktop\IR Pre-processing\stanford-corenlp-full-2018-02-27'
+    Stanford_corenlp_lib = settings.CORENLP
     Stopword_dictionary = Stanford_corenlp_lib+'\patterns\stopwords.txt'
 
     def __init__(self):

@@ -1,6 +1,7 @@
 import pysolr
+from django.conf import settings
 class Searcher:
-    solr_url = 'http://127.0.0.1:8983/solr/irproject/'
+    solr_url = settings.SOLR_URL
     def __init__(self):
         self.solr = pysolr.Solr(Searcher.solr_url, timeout=10)
         return 

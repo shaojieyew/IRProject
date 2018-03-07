@@ -6,15 +6,15 @@ import os.path
 from django.conf import settings
 from pathlib import Path
 import re
+from myapp import preprocess
+from myapp import indexer as solrIndexer 
 
 class IndexManager:
     def __init__(self):
         return 
-
-    def get_non_indexed_file(self):
     
-        dir_path =  os.path.join( getattr(settings, "PROJECT_ROOT", None), '..')
-
+    def get_non_indexed_file(self):
+        dir_path =  os.path.dirname(myapp.__file__)+'\\..'
         folders = ['glassdoor_company','glassdoor_interview','glassdoor_review','indeed_company','indeed_review']
         last_indexed = {'glassdoor_company':0,'glassdoor_interview':0,'glassdoor_review':0,'indeed_company':0,'indeed_review':0}
         last_indexed_timestamp_file = dir_path+'\\crawled_data\\last_indexed.txt'
@@ -37,15 +37,34 @@ class IndexManager:
             all_files=all_files+files
         return all_files
         
-        
     
+    def is_indexing(self):
+        dir_path =  os.path.dirname(myapp.__file__)+'\\..'
+        indicate_indexing_file = dir_path+'\\crawled_data\\indexing.txt'
+        my_file = Path(indicate_indexing_file)
+        if (my_file.is_file()):
+            return 1
+        else:
+            return 0
+            
+    def stop_indexing(self):
+        dir_path =  os.path.dirname(myapp.__file__)+'\\..'
+        indicate_indexing_file = dir_path+'\\crawled_data\\indexing.txt'
+        my_file = Path(indicate_indexing_file)
+        print(indicate_indexing_file)
+        if (my_file.is_file()):
+            os.remove(indicate_indexing_file)
+            
+        
+            
     def start_indexing(self):
-        dir_path =  os.path.join( getattr(settings, "PROJECT_ROOT", None), '..')
-
+        dir_path =  os.path.dirname(myapp.__file__)+'\\..'
+        indicate_indexing_file = dir_path+'\\crawled_data\\indexing.txt'
         folders = ['glassdoor_company','glassdoor_interview','glassdoor_review','indeed_company','indeed_review']
         last_indexed = {'glassdoor_company':0,'glassdoor_interview':0,'glassdoor_review':0,'indeed_company':0,'indeed_review':0}
         last_indexed_timestamp_file = dir_path+'\\crawled_data\\last_indexed.txt'
         
+        open(indicate_indexing_file, 'w').close() 
         my_file = Path(last_indexed_timestamp_file)
         if not(my_file.is_file()):
             open(last_indexed_timestamp_file, 'w').close()   
@@ -54,6 +73,7 @@ class IndexManager:
         with open(last_indexed_timestamp_file) as handle:
             last_indexed = json.loads(handle.read())
         
+        terminate = 0
         for folder in folders:
             search_dir = dir_path + '\\crawled_data\\'+folder
             os.chdir(search_dir)
@@ -61,13 +81,45 @@ class IndexManager:
             files = filter(lambda x: os.path.getmtime(x) > last_indexed[folder], files)
             files = [os.path.join(search_dir, f) for f in files]
             files.sort(key=lambda x: os.path.getmtime(x))
+            print(search_dir)
             for file in files:
-                print(file)
-                last_indexed[folder] = os.path.getmtime(file)
-                with open(last_indexed_timestamp_file, 'w') as file:
-                    file.write(json.dumps(last_indexed)) 
+                if (Path(indicate_indexing_file).is_file()):
+                    #print(file)
+                    self.process_file(file)
+                    last_indexed[folder] = os.path.getmtime(file)
+                else:
+                    terminate=1
+                    print(search_dir)
+                    break
+            if terminate == 1:
+                break
+        with open(last_indexed_timestamp_file, 'w') as file:
+            file.write(json.dumps(last_indexed))
         
         return "finished"
+        
+    def process_file(self,file):
+        filename = file
+        data = json.load(open(filename))
+        data["id"]=filename.split('..')[1]
+        preprocessor = preprocess.PreprocessPipeline()
+        field_to_search=["company_name","headquarter","type","title","industry","position","pros","cons","adviceMgmt","review_description","opinion1","opinion2","opinion3","interview_details","interview_question"]
+        data["search_field"] =[]
+        for field in field_to_search:
+            try:
+                if not (data[field] is None):
+                    result = preprocessor.process(data[field])
+                    if len(result)>0 :
+                        data["search_field"]=data["search_field"] + result
+            except KeyError:
+                i=1
+                #print("no key")
+        #print(data["search_field"])
+        index = solrIndexer.Indexer()
+        result = index.add(data)
+        if result == 1:
+            print("index added: "+data["id"])
+        return 
     '''
     #filename = 'test.json'
     #data = json.load(open(filename))
