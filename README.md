@@ -1,5 +1,7 @@
 # IRProject
 
+Webapp build with Danjago framework
+
 To start server:
 python manage.py runserver
 
@@ -10,3 +12,4 @@ Modules:
 myapp  (webapp module),
 glassdoor  (crawler module)
 
+Sample crawled data: https://goo.gl/hQQFuH
