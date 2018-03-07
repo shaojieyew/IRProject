@@ -24,20 +24,22 @@ class CrawlerView(TemplateView):
       
     def start_crawling(request, **kwargs):
         #start crawling
-        keyword = request.GET.get("crawl_keyword")
-        keyword.strip()
-        crawler = None
-        if(request.GET.get("crawl_option")=='gdr'):
-            crawler = 'glassdoor_company_review'
-        if(request.GET.get("crawl_option")=='gdi'):
-            crawler = 'glassdoor_company_interview'
-        if(request.GET.get("crawl_option")=='idr'):
-            crawler = 'indeed_company_review'
-            
-        if(len(keyword)>0):
-            os.system("scrapy crawl "+crawler+" -a keyword="+keyword)
-        else:
-            os.system("scrapy crawl "+crawler)
+        crawling_file = Path("crawling.txt")
+        if not(crawling_file.is_file()):
+            keyword = request.GET.get("crawl_keyword")
+            keyword.strip()
+            crawler = None
+            if(request.GET.get("crawl_option")=='gdr'):
+                crawler = 'glassdoor_company_review'
+            if(request.GET.get("crawl_option")=='gdi'):
+                crawler = 'glassdoor_company_interview'
+            if(request.GET.get("crawl_option")=='idr'):
+                crawler = 'indeed_company_review'
+                
+            if(len(keyword)>0):
+                os.system("scrapy crawl "+crawler+" -a keyword="+keyword)
+            else:
+                os.system("scrapy crawl "+crawler)  
         
         
     def stop_crawling(request, **kwargs):

@@ -18,11 +18,15 @@ from django.urls import path
 from django.conf.urls import url, include
 from myapp import views
 from myapp import crawler
+from myapp import indexing
 urlpatterns = [
 
 	url(r'^$', views.HomePageView.as_view()),
 	url(r'^crawl$',  crawler.CrawlerView.crawler, name='crawl'),
 	url(r'^crawl/start$',  crawler.CrawlerView.start_crawling, name='start_crawling'),
 	url(r'^crawl/start/(?P<query>\w+)$',  crawler.CrawlerView.start_crawling, name='start_crawling'),
-	url(r'^crawl/stop$',  crawler.CrawlerView.stop_crawling, name='stop_crawling')
+	url(r'^crawl/stop$',  crawler.CrawlerView.stop_crawling, name='stop_crawling'),
+    
+	url(r'^indexing$',  indexing.IndexingView.index, name='index'),
+	url(r'^indexing/start$',  indexing.IndexingView.start_indexing, name='start_indexing'),
 ]

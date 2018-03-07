@@ -45,10 +45,11 @@
                             function(data, status){
                         });
                         document.getElementById("btn_start_crawl").innerText= "Starting ...";
+                        document.getElementById("btn_start_crawl").disabled = true;
                         setTimeout(function(){
                             window.location.href = "/crawl";
                             
-                        }, 5000);
+                        }, 10000);
                     }
                 </script>
                 </p>
