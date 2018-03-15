@@ -1,4 +1,6 @@
 {% extends 'base.html' %}
+{% block head %}
+{% endblock %}
 {% block content %}
         <div class="post">
               <h1 class="my-4">Crawler
@@ -49,7 +51,7 @@
                         setTimeout(function(){
                             window.location.href = "/crawl";
                             
-                        }, 10000);
+                        }, 1000);
                     }
                 </script>
                 </p>

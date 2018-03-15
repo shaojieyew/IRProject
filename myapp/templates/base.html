@@ -11,10 +11,16 @@
     <meta name="author" content="">
 
     <title>{{title}}</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="{% static 'css/1-col-portfolio.css' %}"/>
+    <link href="{% static 'vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet"/>
+    
 
-    <link rel="stylesheet" href="{% static 'css/1-col-portfolio.css' %}">
-    <link href="{% static 'vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
-
+    <!-- Bootstrap core JavaScript -->
+    <script src="{% static 'vendor/jquery/jquery.min.js' %}"></script>
+    <script src="{% static 'vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+      {% block head %}
+      {% endblock %}
   </head>
 
   <body>
@@ -29,8 +35,31 @@
         <div class="collapse navbar-collapse" id="navbarResponsive">
           <ul class="navbar-nav ml-auto">
             <li class="nav-item">
+            <!-- 
               <a class="nav-link" href="/">Home
-              </a>
+              </a>-->
+              <!-- search -->
+              <form action="/search">
+                  <div class="searchbar" >
+                        <input type="text" name="q" class="form-control searchbar-textbox" placeholder="Search..." style="width: 200px;" id="search_box">
+                        <!--<input type="submit"  class="btn-basic searchbar-button" value="Search" id="search_button">-->
+                        <button type="submit" value="Search" id="search_button" class="btn btn-info searchbar-button">
+                            <i class="fa fa-search"></i>
+                        </button>
+                  </div>
+              </form>
+                <script>
+                $('#search_box').focus(function()
+                {
+                    $(this).animate({ width: 500 }, 'fast');
+                    document.getElementById("search_button").style.opacity = "1";
+                }).blur(function()
+                {
+                    $(this).animate({ width: 200}, 'fast');
+                    document.getElementById("search_button").style.opacity = "0";
+                });
+                </script>
+              <!--/search -->
             </li>
             <li class="nav-item">
               <a class="nav-link" href="/crawl">Crawler</a>
@@ -58,9 +87,6 @@
       <!-- /.container -->
     </footer>
 
-    <!-- Bootstrap core JavaScript -->
-    <script src="{% static 'vendor/jquery/jquery.min.js' %}"></script>
-    <script src="{% static 'vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
   </body>
 
 </html>

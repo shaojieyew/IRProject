@@ -1,8 +1,4 @@
-/*!
- * Start Bootstrap - 1 Col Portfolio (https://startbootstrap.com/template-overviews/1-col-portfolio)
- * Copyright 2013-2017 Start Bootstrap
- * Licensed under MIT (https://github.com/BlackrockDigital/startbootstrap-1-col-portfolio/blob/master/LICENSE)
- */
+
 
 body {
   padding-top: 54px;
@@ -16,4 +12,58 @@ body {
 
 .pagination {
   margin-bottom: 15px;
+}
+
+.searchbar {
+  margin-right: 25px;
+}
+
+
+.searchbar-textbox{
+    float:left;
+    position:relative;
+    right:-41px;
+    height:38px;
+}
+
+.searchbar-button{
+    float:right;
+    position:relative;
+    width:30;
+    border-radius: 0px 4px 4px 0px;
+    border:0px;
+    height:38px;
+    cursor:pointer;
+    opacity:0;
+    filter: alpha(opacity=0);
+}
+.search-result{
+    margin-top:20px;
+}
+
+
+.search-panel {
+    margin:30px auto 20px auto;
+    border:1px solid #cccccc;
+    width:100%;
+    max-width:700px;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+.search-panel input {
+    background-color:transparent;
+    border:0;
+    border-radius:10px 10px 10px 10px;
+    outline: none;
+}
+.search-panel #search_button {
+    cursor: pointer;
+    margin-right:10px;
+    padding:10px 15px 10px 15px;
+    border-radius:50px;
+}
+.search-panel #search_box {
+    padding:15px 30px 15px 15px;
+    width:100%;
+    font-size: 22px;
 }

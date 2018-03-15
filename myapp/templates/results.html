@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% block head %}
+
+{% endblock %}
+{% block content %}
+        <div class="post">
+              <form action="/search">
+              <table class="search-panel" >
+              <tr>
+              <td style="width:99%">
+                 <input type="text" value = "{{query}}"  name="q"  placeholder="Search..."  id="search_box"></input>
+              </td>
+              <td style="width:1%">
+                 <button type="submit" value="Search" id="search_button" class="btn btn-info">
+                  <i class="fa fa-search"></i>
+                </button>
+              </td>
+              </tr> 
+              </table>
+              </form>
+              
+              <h3 >Results
+              </h3>
+              {% for result in results %}
+              <div class="search-result">
+               <!-- result row -->
+                  <div class="row">
+                    <div class="col-md-15">
+                      <h5>{{result.id}}</h5>
+                      <p>{{result}}</p>
+                      
+                    </div>
+                  </div>
+              </div>
+              <!-- /.row -->
+              {% endfor %}
+        </div>
+{% endblock %}

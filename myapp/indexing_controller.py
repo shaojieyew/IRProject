@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.views.generic import TemplateView
-from myapp import index_manager
+from myapp.solr_manager import index_manager
 # Create your views here.
 class IndexingView(TemplateView):
     

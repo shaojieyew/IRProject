@@ -26,6 +26,7 @@ class CrawlerView(TemplateView):
         #start crawling
         crawling_file = Path("crawling.txt")
         if not(crawling_file.is_file()):
+            open('crawling.txt', 'w').close()
             keyword = request.GET.get("crawl_keyword")
             keyword.strip()
             crawler = None

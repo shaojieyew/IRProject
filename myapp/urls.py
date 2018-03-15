@@ -17,8 +17,9 @@ from django.contrib import admin
 from django.urls import path
 from django.conf.urls import url, include
 from myapp import views
-from myapp import crawler
-from myapp import indexing
+from myapp import crawler_controller as crawler
+from myapp import indexing_controller as indexing
+from myapp import search_controller as search
 urlpatterns = [
 
 	url(r'^$', views.HomePageView.as_view()),
@@ -32,4 +33,6 @@ urlpatterns = [
 	url(r'^indexing/isindexing$',  indexing.IndexingView.is_indexing, name='is_indexing'),
 	url(r'^indexing/stop$',  indexing.IndexingView.stop_indexing, name='stop_indexing'),
 	url(r'^indexing/files$',  indexing.IndexingView.get_files, name='get_files'),
+    
+	url(r'^search$',  search.Search_View.search, name='search'),
 ]

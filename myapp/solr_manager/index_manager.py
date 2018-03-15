@@ -1,13 +1,13 @@
 
 import json
-import os
 import myapp
+import os
 import os.path
 from django.conf import settings
 from pathlib import Path
 import re
-from myapp import preprocess
-from myapp import indexer as solrIndexer 
+from myapp.preprocess import preprocess
+from myapp.solr_manager import indexer as solrIndexer 
 
 class IndexManager:
     def __init__(self):
@@ -73,6 +73,7 @@ class IndexManager:
         with open(last_indexed_timestamp_file) as handle:
             last_indexed = json.loads(handle.read())
         
+        preprocessor = preprocess.PreprocessPipeline()
         terminate = 0
         for folder in folders:
             search_dir = dir_path + '\\crawled_data\\'+folder
@@ -85,7 +86,7 @@ class IndexManager:
             for file in files:
                 if (Path(indicate_indexing_file).is_file()):
                     #print(file)
-                    self.process_file(file)
+                    self.process_file(file,preprocessor)
                     last_indexed[folder] = os.path.getmtime(file)
                 else:
                     terminate=1
@@ -95,19 +96,22 @@ class IndexManager:
                 break
         with open(last_indexed_timestamp_file, 'w') as file:
             file.write(json.dumps(last_indexed))
-        
+        preprocessor.close()
         return "finished"
         
-    def process_file(self,file):
+    def process_file(self,file,preprocessor):
         filename = file
         data = json.load(open(filename))
         data["id"]=filename.split('..')[1]
-        preprocessor = preprocess.PreprocessPipeline()
         field_to_search=["company_name","headquarter","type","title","industry","position","pros","cons","adviceMgmt","review_description","opinion1","opinion2","opinion3","interview_details","interview_question"]
         data["search_field"] =[]
         for field in field_to_search:
             try:
                 if not (data[field] is None):
+                    if(field=='company_name' and data[field][(len(data[field])-11):] ==' Interviews' ):
+                        data[field] = data[field][:(len(data[field])-11)]
+                    if(field=='company_name' and data[field][(len(data[field])-8):] ==' Reviews' ):
+                        data[field] = data[field][:(len(data[field])-8)]
                     result = preprocessor.process(data[field])
                     if len(result)>0 :
                         data["search_field"]=data["search_field"] + result
@@ -117,7 +121,8 @@ class IndexManager:
         #print(data["search_field"])
         index = solrIndexer.Indexer()
         result = index.add(data)
-        if result == 1:
+        if result == 1: 
+            print("company : "+data["company_name"])
             print("index added: "+data["id"])
         return 
     '''

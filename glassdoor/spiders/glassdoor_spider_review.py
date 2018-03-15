@@ -120,7 +120,8 @@ class GlassdoorSpider(scrapy.Spider):
             industry = response.xpath('//div[@class=\'infoEntity\' and label/text()[1]=\'Industry\']/span[@class=\'value\']/text()').extract_first()
             revenue = response.xpath('//div[@class=\'infoEntity\' and label/text()[1]=\'Revenue\']/span[@class=\'value\']/text()').extract_first()
             competitors = response.xpath('//div[@class=\'infoEntity\' and label/text()[1]=\'Competitors\']/span[@class=\'value\']/text()').extract_first()
-            
+            if(company_name[(len(company_name)-8):] ==' Reviews' ):
+                company_name = company_name[:(len(company_name)-8)]    
             data = {'company_name':company_name,'logo':logo,'video':video,'website':website,'headquarter':headquarter,'size':size,
             'founded':founded,'type':type,'industry':industry,'revenue':revenue,'competitors':competitors}
                 

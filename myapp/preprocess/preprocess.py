@@ -6,15 +6,17 @@ from django.conf import settings
 class PreprocessPipeline:
     Stanford_corenlp_lib = settings.CORENLP
     Stopword_dictionary = Stanford_corenlp_lib+'\patterns\stopwords.txt'
-
+    nlp = None
+    
     def __init__(self):
-        self.nlp = StanfordCoreNLP(PreprocessPipeline.Stanford_corenlp_lib)
+        if(PreprocessPipeline.nlp is None):
+            PreprocessPipeline.nlp = StanfordCoreNLP(PreprocessPipeline.Stanford_corenlp_lib)
         return 
     
     def process(self, words):
         if not (words is None):
             #tokenize 
-            words = self.nlp.word_tokenize(words)
+            words = PreprocessPipeline.nlp.word_tokenize(words)
             #normalize to lower case, remove stopwords and punctuation
             words = self.remove_stopword(words)
             #perform remove none alphabatic and perform porter stemming
@@ -57,5 +59,6 @@ class PreprocessPipeline:
             return
         
     def close(self):
-        self.nlp.close() 
+        PreprocessPipeline.nlp.close()
+        return
       
