@@ -1,14 +1,42 @@
 {% extends 'base.html' %}
 {% block head %}
-
+<script>
+    $( document ).ready(function() {
+        e=document.getElementById('search-filter');
+        e.value = '{{filter_query}}'
+        document.getElementById('search-filter').value = '{{filter_query}}'
+        if(e.options[e.selectedIndex].value=="*:*"){
+                e.style.color='#bbbbbb';
+            }else{
+                e.style.color='#777777';
+        }
+    });
+</script>
 {% endblock %}
 {% block content %}
         <div class="post">
               <form action="/search">
               <table class="search-panel" >
               <tr>
-              <td style="width:99%">
+              <td style="width:60%">
                  <input type="text" value = "{{query}}"  name="q"  placeholder="Search..."  id="search_box"></input>
+              </td>
+              <td >
+                 <select id='search-filter' onchange="on_filterchange(this)" style="color:#bbbbbb;" value = "{{query}}"  name="fq"  placeholder="Search..." >
+                  <option value="*:*" style="color:#bbbbbb">Filter...</option>
+                  <option value="doctype:*company" style="color:#777777">Company</option>
+                  <option value="doctype:*review" style="color:#777777">Company Reviews</option>
+                  <option value="doctype:*interview" style="color:#777777">Interview Reviews</option>
+                 </select>
+                 <script>
+                    function on_filterchange(e){
+                        if(e.options[e.selectedIndex].value=="*:*"){
+                            e.style.color='#bbbbbb';
+                        }else{
+                            e.style.color='#777777';
+                        }
+                    }
+                 </script>
               </td>
               <td style="width:1%">
                  <button type="submit" value="Search" id="search_button" class="btn btn-info">
@@ -18,9 +46,19 @@
               </tr> 
               </table>
               </form>
-              
-              <h3 >Results
+              <h5 class="search-info">
+              {% if not spellcorrect == '' %}
+                  {% if is_corrected_result == 1 %}
+                    No result found for '{{query}}'. '{{spellcorrect}}' is used instead.
+                  {% else %}
+                    Did you mean: '<a href="/search?q={{spellcorrect}}">{{spellcorrect}}</a>' ?
+                  {% endif %}
+              {% endif %}
+              </h5>
+              <h3 >Found {{document_found_count}} Results
               </h3>
+              
+              
               {% for result in results %}
               <div class="search-result">
                <!-- result row -->
@@ -34,5 +72,19 @@
               </div>
               <!-- /.row -->
               {% endfor %}
+              
+              
+              <!--Pagination-->
+                  <span class="pagination">
+                  {% for link in pagination.links %}
+                      {% if not link.index == pagination.page %}
+                            <a  href="{{link.link}}">{{link.index}}</a>
+                      {% else %}
+                            <a class="active" href="{{link.link}}">{{link.index}}</a>
+                      {% endif %}
+                  {% endfor %}
+                  
+                  </span>
+              <!--/Pagination-->
         </div>
 {% endblock %}

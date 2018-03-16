@@ -41,5 +41,13 @@ class IndexingView(TemplateView):
         else:
             status = "" 
         return render(request, 'indexing.html', context={'status': status,'files':files})
-      
+    
+    def delete(request, **kwargs):  
+        indexManager = index_manager.IndexManager()
+        indexManager.delete_all_index()
+        if(indexManager.is_indexing()==1):
+            status = "indexing" 
+        else:
+            status = "" 
+        return render(request, 'indexing.html', context={'status': status,'deleted': 1})
     

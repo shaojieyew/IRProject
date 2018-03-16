@@ -59,6 +59,7 @@ class PreprocessPipeline:
             return
         
     def close(self):
+        PreprocessPipeline.nlp=None
         PreprocessPipeline.nlp.close()
         return
       

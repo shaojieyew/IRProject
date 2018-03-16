@@ -175,10 +175,12 @@ class GlassdoorSpider(scrapy.Spider):
             benefit_rating = review.css('span.cmp-Rating-on::attr(style)').extract()[1].split(':')[1].split('.')[0].strip()
             job_prospect_rating = review.css('span.cmp-Rating-on::attr(style)').extract()[2].split(':')[1].split('.')[0].strip()
             management_rating = review.css('span.cmp-Rating-on::attr(style)').extract()[3].split(':')[1].split('.')[0].strip()
+            job_culture_rating = review.css('span.cmp-Rating-on::attr(style)').extract()[4].split(':')[1].split('.')[0].strip()
             
+            overall_rating = (int(work_life_balance_rating)+int(benefit_rating)+int(job_prospect_rating)+int(management_rating)+int(job_culture_rating))/100
             
-            data = {'review_id':review_id,'company_name':company_name,'datetime':datetime,'title':title,'position':position,'location':location,'pros':pros,'cons':cons,'review_description':review_description,
-            'work_life_balance_rating':(int(work_life_balance_rating)/20),'benefit_rating':(int(benefit_rating)/20),'job_prospect_rating':(int(job_prospect_rating)/20),'management_rating':(int(management_rating)/20)}
+            data = {'review_id':review_id,'company_name':company_name,'datetime':datetime,'title':title,'rating':overall_rating,'position':position,'location':location,'pros':pros,'cons':cons,'review_description':review_description,
+            'work_life_balance_rating':(int(work_life_balance_rating)/20),'benefit_rating':(int(benefit_rating)/20),'job_prospect_rating':(int(job_prospect_rating)/20),'management_rating':(int(management_rating)/20),'job_culture':(int(job_culture_rating)/20)}
             
             fileLocation = 'crawled_data/indeed_review'
             if not os.path.exists(fileLocation):

@@ -157,7 +157,8 @@ class GlassdoorSpider(scrapy.Spider):
         industry = response.xpath('//div[@class=\'infoEntity\' and label/text()[1]=\'Industry\']/span[@class=\'value\']/text()').extract_first()
         revenue = response.xpath('//div[@class=\'infoEntity\' and label/text()[1]=\'Revenue\']/span[@class=\'value\']/text()').extract_first()
         competitors = response.xpath('//div[@class=\'infoEntity\' and label/text()[1]=\'Competitors\']/span[@class=\'value\']/text()').extract_first()
-        
+        if(company_name[(len(company_name)-8):] ==' Reviews' ):
+                company_name = company_name[:(len(company_name)-8)]    
         data = {'company_name':company_name,'logo':logo,'video':video,'website':website,'headquarter':headquarter,'size':size,
         'founded':founded,'type':type,'industry':industry,'revenue':revenue,'competitors':competitors}
         
@@ -188,6 +189,8 @@ class GlassdoorSpider(scrapy.Spider):
 
     def parse_company_review(self, response):
         company_name = response.css('div.condensed.showHH').css('span::text').extract_first()
+        if(company_name[(len(company_name)-8):] ==' Reviews' ):
+            company_name = company_name[:(len(company_name)-8)]    
         for review in response.css('div.hreview'):
             datetime = review.css('time.date::attr(datetime)').extract_first()
             title = review.css('span.summary::text').extract_first()

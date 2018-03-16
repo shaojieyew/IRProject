@@ -84,6 +84,8 @@ class GlassdoorSpider(scrapy.Spider):
             list_of_company_url = []
             for quote in response.css('div.margBotXs'):
                 company_name = quote.css('a.tightAll::text').extract_first()
+                if(company_name[(len(company_name)-11):] ==' Interviews' ):
+                    company_name = company_name[:(len(company_name)-11)]
                 href =  quote.css('a.tightAll::attr(href)').extract_first()
                 url = ('https://www.glassdoor.com'+href)
                 list_of_company_url.append(url)
@@ -120,7 +122,8 @@ class GlassdoorSpider(scrapy.Spider):
             industry = response.xpath('//div[@class=\'infoEntity\' and label/text()[1]=\'Industry\']/span[@class=\'value\']/text()').extract_first()
             revenue = response.xpath('//div[@class=\'infoEntity\' and label/text()[1]=\'Revenue\']/span[@class=\'value\']/text()').extract_first()
             competitors = response.xpath('//div[@class=\'infoEntity\' and label/text()[1]=\'Competitors\']/span[@class=\'value\']/text()').extract_first()
-            
+            if(company_name[(len(company_name)-11):] ==' Interviews' ):
+                company_name = company_name[:(len(company_name)-11)]
             data = {'company_name':company_name,'logo':logo,'video':video,'website':website,'headquarter':headquarter,'size':size,
             'founded':founded,'type':type,'industry':industry,'revenue':revenue,'competitors':competitors}
                 
@@ -191,6 +194,8 @@ class GlassdoorSpider(scrapy.Spider):
 
     def parse_company_interview(self, response):
         company_name = response.css('div.condensed.showHH').css('span::text').extract_first()
+        if(company_name[(len(company_name)-11):] ==' Interviews' ):
+            company_name = company_name[:(len(company_name)-11)]
         for review in response.css('li.empReview.cf'):
             datetime = review.css('time.date::attr(datetime)').extract_first()
             title = review.css('span.reviewer::text').extract_first()

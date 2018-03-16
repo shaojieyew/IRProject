@@ -2,6 +2,11 @@
 {% block head %}
 {% endblock %}
 {% block content %}
+        {% if deleted == 1 %}
+                 <script>
+                    alert("deleted");
+                </script>
+        {% endif %}
         <div class="post">
               <h1 class="my-4">Indexing
               </h1>
@@ -13,16 +18,18 @@
                     We are indexing ...
                     </h4>
                     <button class="btn btn-danger" id="btn_stop_indexing"  onclick="onclick_btn_stop_indexing()" type="button">Stop Indexing</button>
-                         <script>
+                    <script>
                  
                     
                     function onclick_btn_stop_indexing() {
                         window.location.href = "/indexing/stop";
                     }
-                </script>
+                    </script>
                     {% else %} 
                 
                     <button class="btn btn-primary" id="btn_start_indexing"  onclick="onclick_btn_start_indexing()" type="button">Start Indexing</button>
+                    <button class="btn btn-danger" id="btn_delete"  onclick="onclick_btn_delete_indexing()" type="button">Delete Index</button>
+                    
                     <script>
                     function onclick_btn_start_indexing() {
                         $.get("/indexing/start",{},
@@ -30,13 +37,17 @@
                         });
                         document.getElementById("btn_start_indexing").innerText= "Starting ...";
                         document.getElementById("btn_start_indexing").disabled = true;
+                        document.getElementById("btn_delete").disabled = true;
                         setTimeout(function(){
                             window.location.href = "/indexing";
                             
                         }, 2000);
                         
                     }
-                </script>
+                    function onclick_btn_delete_indexing() {
+                        window.location.href = "/indexing/delete";
+                    }
+                    </script>
                 
                 
                 {% endif %}

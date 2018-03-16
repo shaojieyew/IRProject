@@ -1,7 +1,8 @@
-
+from dateutil import parser
 import json
 import myapp
 import os
+import datetime
 import os.path
 from django.conf import settings
 from pathlib import Path
@@ -99,31 +100,53 @@ class IndexManager:
         preprocessor.close()
         return "finished"
         
+    def delete_all_index(self):
+        index = solrIndexer.Indexer()
+        index.delete_all_index()
+        dir_path =  os.path.dirname(myapp.__file__)+'\\..'
+        file = dir_path+'\\crawled_data\\last_indexed.txt'
+        my_file = Path(file)
+        if (my_file.is_file()):
+            os.remove(file)
+        return 
+        
     def process_file(self,file,preprocessor):
         filename = file
         data = json.load(open(filename))
-        data["id"]=filename.split('..')[1]
-        field_to_search=["company_name","headquarter","type","title","industry","position","pros","cons","adviceMgmt","review_description","opinion1","opinion2","opinion3","interview_details","interview_question"]
-        data["search_field"] =[]
+        data["id"]=filename.split('\\..')[1]
+        data["doctype"]=filename.split('\\..')[1].replace("\\crawled_data\\", "").split('\\')[0]
+        
+        if not (data['company_name'] is None):
+            if(data['company_name'][(len(data['company_name'])-11):] ==' Interviews' ):
+                data['company_name'] = data['company_name'][:(len(data['company_name'])-11)]
+            if(data['company_name'][(len(data['company_name'])-8):] ==' Reviews' ):
+                data['company_name'] = data['company_name'][:(len(data['company_name'])-8)]
+        try:
+            if not (data['datetime'] is None):
+                data['datetime'] = parser.parse(data['datetime'])
+        except KeyError:
+            i=1
+        field_to_search=["company_name","headquarter","competitors","title","industry","position","pros","cons","adviceMgmt","review_description","interview_details","interview_question"]
         for field in field_to_search:
             try:
                 if not (data[field] is None):
-                    if(field=='company_name' and data[field][(len(data[field])-11):] ==' Interviews' ):
-                        data[field] = data[field][:(len(data[field])-11)]
-                    if(field=='company_name' and data[field][(len(data[field])-8):] ==' Reviews' ):
-                        data[field] = data[field][:(len(data[field])-8)]
+                    if (data[field].strip().lower() == 'unknown'):
+                        data[field]=""
                     result = preprocessor.process(data[field])
                     if len(result)>0 :
-                        data["search_field"]=data["search_field"] + result
+                        data[field+"_tag"]=(' '.join(result)) 
             except KeyError:
                 i=1
                 #print("no key")
         #print(data["search_field"])
         index = solrIndexer.Indexer()
         result = index.add(data)
+        
+        #print(data);
         if result == 1: 
             print("company : "+data["company_name"])
             print("index added: "+data["id"])
+        
         return 
     '''
     #filename = 'test.json'
