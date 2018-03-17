@@ -3,25 +3,37 @@
 
 {% endblock %}
 {% block content %}
-        <div class="post">
-                
-
-        
-              <h2 class="my-4">Results
-              </h2>
-               <!-- result row -->
-              <div class="row">
-                <div class="col-md-3">
-                  <a href="#">
-                    <img class="img-fluid rounded" src="http://placehold.it/500x300" alt="">
-                  </a>
-                </div>
-                <div class="col-md-5">
-                  <h5>Project One</h5>
-                  <p>text...</p>
-                  
-                </div>
-              </div>
-              <!-- /.row -->
+        <div >
+              <form action="/search">
+              <table class="search-panel" >
+              <tr>
+              <td style="width:60%">
+                 <input type="text" value = "{{query}}"  name="q"  placeholder="Search..."  id="search_box"></input>
+              </td>
+              <td >
+                 <select id='search-filter' onchange="on_filterchange(this)" style="color:#bbbbbb;" value = "{{query}}"  name="fq"  placeholder="Search..." >
+                  <option value="*:*" style="color:#bbbbbb">Filter...</option>
+                  <option value="doctype:*company" style="color:#777777">Company</option>
+                  <option value="doctype:*review" style="color:#777777">Company Reviews</option>
+                  <option value="doctype:*interview" style="color:#777777">Interview Reviews</option>
+                 </select>
+                 <script>
+                    function on_filterchange(e){
+                        if(e.options[e.selectedIndex].value=="*:*"){
+                            e.style.color='#bbbbbb';
+                        }else{
+                            e.style.color='#777777';
+                        }
+                    }
+                 </script>
+              </td>
+              <td style="width:1%">
+                 <button type="submit" value="Search" id="search_button" class="btn btn-info">
+                  <i class="fa fa-search"></i>
+                </button>
+              </td>
+              </tr> 
+              </table>
+              </form>
         </div>
 {% endblock %}

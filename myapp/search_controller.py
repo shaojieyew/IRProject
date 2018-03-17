@@ -31,7 +31,7 @@ class Search_View(TemplateView):
         document_found_count = response['response']['numFound']
         
         #spellcheck#########################################################################
-        corrected = ''
+        corrected = original_query
         if(document_found_count<200 and len(original_query)>0):
             spellcheckreq = 'http://localhost:8983/solr/irproject/spell?spellcheck.q='+original_query.replace(' ','%20')+'&spellcheck=true&spellcheck.extendedResults=true&spellcheck.collate=true&wt=json'
             
@@ -41,12 +41,11 @@ class Search_View(TemplateView):
                 if(spellcheckedresult['spellcheck']['correctlySpelled'] == False):
                     if(len(spellcheckedresult['spellcheck']['collations'])>1):
                         corrected = spellcheckedresult['spellcheck']['collations'][1]['collationQuery']
-                        preprocessor = preprocess.PreprocessPipeline()
-                        #print(spellcheckedresult)
-                        processed_query1 = preprocessor.process(original_query)
-                        processed_query2 = preprocessor.process(corrected)
-                        if(processed_query1==processed_query2):
-                            corrected=''
+                        #preprocessor = preprocess.PreprocessPipeline()
+                        #processed_query1 = preprocessor.process(original_query)
+                        #processed_query2 = preprocessor.process(corrected)
+                        #if(processed_query1==processed_query2):
+                        #    corrected=''
             except:
                 i=1
         
@@ -58,11 +57,17 @@ class Search_View(TemplateView):
             if(document_found_count>0):
                 is_corrected_result = 1
         
+        ##Load oringal json files#######################################################
         r = []
         for document in response['response']['docs']:
             url = Search_View.dir_path+document['id']
             data = json.load(open(url))
             data["id"]=document['id']
+            data["doctype"]=document['doctype']
+            if(data["company_name"][(len(data["company_name"])-11):] ==' Interviews' ):
+                data["company_name"] = data["company_name"][:(len(data["company_name"])-11)]
+            if(data["company_name"][(len(data["company_name"])-8):] ==' Reviews' ):
+                data["company_name"] = data["company_name"][:(len(data["company_name"])-8)]
             r.append(data)
             
         ##pagination#######################################################
@@ -90,7 +95,7 @@ class Search_View(TemplateView):
             currentUrl=currentUrl.replace('&p='+page,'')
             if not(p==minpage):
                 pagination['links'].append({'index':'prev','link':(currentUrl+"&p="+str(p-1))});
-            for i in range(minrange,maxrange):
+            for i in range(minrange,maxrange+1):
                 pagination['links'].append({'index':str(i),'link':(currentUrl+"&p="+str(i))});
             if not(p==maxpage):
                 pagination['links'].append({'index':'next','link':(currentUrl+"&p="+str(p+1))});
@@ -100,39 +105,61 @@ class Search_View(TemplateView):
         context={'query': original_query,'results': r,'spellcorrect': corrected,
         'document_found_count':document_found_count,'is_corrected_result':is_corrected_result,
         'filter_query':filter_query,'pagination':pagination})
-    def searchDocument(query,filter_query,page,rows):
-        #preprocess query
-        preprocessor = preprocess.PreprocessPipeline()
-        processed_query = preprocessor.process(query)
-        if(len(processed_query)>0):
-            #Boolean Or operator
-            query = '+'.join(processed_query)    
-        else:
-            query = '*'
-        fieldboost = []
-        fieldboost.append('adviceMgmt_tag^1')
-        fieldboost.append('company_name_tag^10')
-        fieldboost.append('cons_tag^1')
-        fieldboost.append('headquarter_tag^1')
-        fieldboost.append('industry_tag^1')
-        fieldboost.append('interview_details_tag^1')
-        fieldboost.append('interview_question_tag^1')
-        fieldboost.append('position_tag^1')
-        fieldboost.append('pros_tag^1')
-        fieldboost.append('review_description_tag^1')
-        fieldboost.append('title_tag^1')
-        fieldboost.append('competitors_tag^0.3')
-        fieldboost = '+'.join(fieldboost)  
         
-        params = []
-        params.append('rows='+str(rows))
-        params.append('defType=dismax')
-        params.append('wt=json')
-        params.append('qf='+fieldboost)
-        params.append('start='+str((int(page)-1)*int(rows)))
-        params.append('fq='+filter_query)
-        params.append('q=+'+query)
-        params.append('mm='+str(int((len(processed_query))*0.75)))
+        
+    def searchDocument(query,filter_query,page,rows):
+        if(len(query)>0):
+            #preprocess query
+            preprocessor = preprocess.PreprocessPipeline()
+            processed_query = preprocessor.process(query)
+            fieldboost = []
+            if(len(processed_query)>0):
+                #Boolean Or operator
+                query = '+'.join(processed_query)     
+                fieldboost.append('adviceMgmt_tag^1')
+                fieldboost.append('company_name_tag^10')
+                fieldboost.append('cons_tag^1')
+                fieldboost.append('headquarter_tag^1')
+                fieldboost.append('industry_tag^1')
+                fieldboost.append('interview_details_tag^1')
+                fieldboost.append('interview_question_tag^1')
+                fieldboost.append('position_tag^1')
+                fieldboost.append('pros_tag^1')
+                fieldboost.append('review_description_tag^1')
+                fieldboost.append('title_tag^1')
+                fieldboost.append('competitors_tag^0.3')
+            else:
+                query = query.replace(' ','%20')
+            fieldboost.append('adviceMgmt^1')
+            fieldboost.append('company_name^10')
+            fieldboost.append('cons^1')
+            fieldboost.append('headquarter^1')
+            fieldboost.append('industry^1')
+            fieldboost.append('interview_details^1')
+            fieldboost.append('interview_question^1')
+            fieldboost.append('position^1')
+            fieldboost.append('pros^1')
+            fieldboost.append('review_description^1')
+            fieldboost.append('title^1')
+            fieldboost.append('competitors^0.3')
+            fieldboost = '+'.join(fieldboost)  
+                
+            params = []
+            params.append('rows='+str(rows))
+            params.append('defType=dismax')
+            params.append('wt=json')
+            params.append('qf='+fieldboost)
+            params.append('start='+str((int(page)-1)*int(rows)))
+            params.append('fq='+filter_query)
+            params.append('q=+'+query)
+            params.append('mm='+str(int((len(processed_query))*0.75)))
+        else:
+            params = []
+            params.append('rows='+str(rows))
+            params.append('wt=json')
+            params.append('start='+str((int(page)-1)*int(rows)))
+            params.append('fq='+filter_query)
+            params.append('q=*:*')
         url_params = '&'.join(params)    
         connection = urlopen('http://localhost:8983/solr/irproject/select?'+url_params)
         response = simplejson.load(connection)

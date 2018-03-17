@@ -1,5 +1,24 @@
 {% extends 'base.html' %}
 {% block head %}
+
+{% if is_crawling == 1 %}
+<script>
+
+$( document ).ready(function() {
+    setInterval(function() {
+        $.get("/crawl/check",
+            function(data, status){
+                if(data.is_crawling==0){
+                    window.location.href = "/crawl";
+                }
+        });
+    }, 3000);
+});
+</script>
+   
+{% endif %}             
+
+
 {% endblock %}
 {% block content %}
         <div class="post">
@@ -13,7 +32,7 @@
                 <h4>
                 Crawler is running...
                 </h4>
-                <button class="btn"  onclick="window.location.href='/crawl/stop'" type="button">Stop Crawling</button>
+                <button class="btn btn-danger"  onclick="window.location.href='/crawl/stop'" type="button">Stop Crawling</button>
                 {% else %} 
                 
                 <div style="width:300px"> 

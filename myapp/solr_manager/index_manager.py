@@ -16,8 +16,8 @@ class IndexManager:
     
     def get_non_indexed_file(self):
         dir_path =  os.path.dirname(myapp.__file__)+'\\..'
-        folders = ['glassdoor_company','glassdoor_interview','glassdoor_review','indeed_company','indeed_review']
-        last_indexed = {'glassdoor_company':0,'glassdoor_interview':0,'glassdoor_review':0,'indeed_company':0,'indeed_review':0}
+        folders = ['company','glassdoor_interview','glassdoor_review','indeed_review']
+        last_indexed = {'company':0,'glassdoor_interview':0,'glassdoor_review':0,'indeed_review':0}
         last_indexed_timestamp_file = dir_path+'\\crawled_data\\last_indexed.txt'
         
         my_file = Path(last_indexed_timestamp_file)
@@ -58,11 +58,12 @@ class IndexManager:
             
         
             
-    def start_indexing(self):
+    def start_indexing(self, type=None):
         dir_path =  os.path.dirname(myapp.__file__)+'\\..'
         indicate_indexing_file = dir_path+'\\crawled_data\\indexing.txt'
-        folders = ['glassdoor_company','glassdoor_interview','glassdoor_review','indeed_company','indeed_review']
-        last_indexed = {'glassdoor_company':0,'glassdoor_interview':0,'glassdoor_review':0,'indeed_company':0,'indeed_review':0}
+
+        folders = ['company','glassdoor_interview','glassdoor_review','indeed_review']
+        last_indexed = {'company':0,'glassdoor_interview':0,'glassdoor_review':0,'indeed_review':0}      
         last_indexed_timestamp_file = dir_path+'\\crawled_data\\last_indexed.txt'
         
         open(indicate_indexing_file, 'w').close() 
@@ -76,6 +77,10 @@ class IndexManager:
         
         preprocessor = preprocess.PreprocessPipeline()
         terminate = 0
+        
+        if not (type is None):
+            folders=[type]
+        
         for folder in folders:
             search_dir = dir_path + '\\crawled_data\\'+folder
             os.chdir(search_dir)
@@ -97,7 +102,18 @@ class IndexManager:
                 break
         with open(last_indexed_timestamp_file, 'w') as file:
             file.write(json.dumps(last_indexed))
-        preprocessor.close()
+        try:
+            preprocessor.close()
+        except:
+            i=1
+        
+        dir_path =  os.path.dirname(myapp.__file__)+'\\..'
+        indicate_indexing_file = dir_path+'\\crawled_data\\indexing.txt'
+        my_file = Path(indicate_indexing_file)
+        print(indicate_indexing_file)
+        if (my_file.is_file()):
+            os.remove(indicate_indexing_file)    
+        
         return "finished"
         
     def delete_all_index(self):

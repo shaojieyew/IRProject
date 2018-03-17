@@ -27,13 +27,16 @@ urlpatterns = [
 	url(r'^crawl/start$',  crawler.CrawlerView.start_crawling, name='start_crawling'),
 	url(r'^crawl/start/(?P<query>\w+)$',  crawler.CrawlerView.start_crawling, name='start_crawling'),
 	url(r'^crawl/stop$',  crawler.CrawlerView.stop_crawling, name='stop_crawling'),
+	url(r'^crawl/check$',  crawler.CrawlerView.check_crawling, name='check_crawling'),
     
 	url(r'^indexing$',  indexing.IndexingView.index, name='index'),
 	url(r'^indexing/start$',  indexing.IndexingView.start_indexing, name='start_indexing'),
+	url(r'^indexing/start/(?P<query>\w+)$',  indexing.IndexingView.start_indexing, name='start_indexing'),
 	url(r'^indexing/isindexing$',  indexing.IndexingView.is_indexing, name='is_indexing'),
 	url(r'^indexing/stop$',  indexing.IndexingView.stop_indexing, name='stop_indexing'),
 	url(r'^indexing/files$',  indexing.IndexingView.get_files, name='get_files'),
 	url(r'^indexing/delete$',  indexing.IndexingView.delete, name='delete'),
+	url(r'^indexing/check$',  indexing.IndexingView.check_indexing, name='check_indexing'),
     
 	url(r'^search$',  search.Search_View.search, name='search'),
 ]

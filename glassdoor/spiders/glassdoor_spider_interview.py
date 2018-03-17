@@ -128,7 +128,7 @@ class GlassdoorSpider(scrapy.Spider):
             'founded':founded,'type':type,'industry':industry,'revenue':revenue,'competitors':competitors}
                 
       
-            fileLocation = 'crawled_data/glassdoor_company'
+            fileLocation = 'crawled_data/company'
             if not os.path.exists(fileLocation):
                 os.makedirs(fileLocation)    
             file = open(fileLocation+'/'+company_name+'.json', 'w')
@@ -167,7 +167,7 @@ class GlassdoorSpider(scrapy.Spider):
         data = {'company_name':company_name,'logo':logo,'video':video,'website':website,'headquarter':headquarter,'size':size,
         'founded':founded,'type':type,'industry':industry,'revenue':revenue,'competitors':competitors}
             
-        fileLocation = 'crawled_data/glassdoor_company'
+        fileLocation = 'crawled_data/company'
         if not os.path.exists(fileLocation):
             os.makedirs(fileLocation)    
         file = open(fileLocation+'/'+company_name+'.json', 'w')

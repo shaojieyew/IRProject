@@ -128,18 +128,20 @@ class GlassdoorSpider(scrapy.Spider):
         industry = response.xpath('//dl[@id=\'cmp-company-details-sidebar\']/dd[preceding-sibling::dt/text()=\'Industry\']//a[@data-tn-element=\'industryLink\']/text()').extract_first()
         size = response.xpath('//dl[@id=\'cmp-company-details-sidebar\']/dd[preceding-sibling::dt/text()=\'Employees\']/text()').extract_first()
         revenue = response.xpath('//dl[@id=\'cmp-company-details-sidebar\']/dd[preceding-sibling::dt/text()=\'Revenue\']/text()').extract_first()
-       
+        website = ','.join(website)     
         data = {'company_name':company_name,'logo':logo,'website':website,'headquarter':headquarter,'size':size,'revenue':revenue,
         'industry':industry}
         
-        fileLocation = 'crawled_data/indeed_company'
+        fileLocation = 'crawled_data/company'
         if not os.path.exists(fileLocation):
             os.makedirs(fileLocation)
-        
-        file = open('crawled_data/indeed_company/'+company_name+'.json', 'w')
-        json.dump(data, file)
-        file.close()
-            
+        my_file = Path('crawled_data/company/'+company_name+'.json')
+        if not(my_file.is_file()):
+            print("@@@@@@@")
+            file = open('crawled_data/company/'+company_name+'.json', 'w')
+            json.dump(data, file)
+            file.close()
+        print("#####")
         review_url = response.xpath('//a[@data-tn-element=\'reviews-countLink\']/@href').extract_first()
         review_url = 'https://www.indeed.com'+review_url
         url = self.pop_url()

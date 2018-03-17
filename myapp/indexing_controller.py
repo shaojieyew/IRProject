@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.views.generic import TemplateView
 from myapp.solr_manager import index_manager
+from django.http import JsonResponse
 # Create your views here.
 class IndexingView(TemplateView):
     
@@ -12,8 +13,11 @@ class IndexingView(TemplateView):
             status = "" 
         return render(request, 'indexing.html', context={'status': status})
     def start_indexing(request, **kwargs):
+        type = request.GET.get("indexing_type")
         indexManager = index_manager.IndexManager()
-        indexManager.start_indexing()
+        if(type == 'all'):
+            indexManager.start_indexing()
+        indexManager.start_indexing(type)
         #print(files)
         return render(request, 'indexing.html', context={'status': "done"})
     def is_indexing(request, **kwargs):
@@ -50,4 +54,11 @@ class IndexingView(TemplateView):
         else:
             status = "" 
         return render(request, 'indexing.html', context={'status': status,'deleted': 1})
-    
+    def check_indexing(request, **kwargs):
+        indexManager = index_manager.IndexManager()
+        if(indexManager.is_indexing()==1):
+            status = "indexing" 
+        else:
+            status = "" 
+        return JsonResponse({'status':status})
+        

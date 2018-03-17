@@ -11,6 +11,7 @@ import pysolr,json,argparse
 import os
 from pathlib import Path
 from myapp import tweet_api
+from django.http import JsonResponse
 # Create your views here.
 class CrawlerView(TemplateView):
     scraplist = []
@@ -55,5 +56,12 @@ class CrawlerView(TemplateView):
         if crawling_file.is_file():
             is_crawling = 1
         return render(request, 'crawler.html', context={'is_crawling': is_crawling})
+        
+    def check_crawling(request, **kwargs):
+        crawling_file = Path("crawling.txt")
+        is_crawling = 0
+        if crawling_file.is_file():
+            is_crawling = 1
+        return JsonResponse({'is_crawling':is_crawling})
         
     

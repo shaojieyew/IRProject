@@ -1,0 +1,67 @@
+
+{% if result.doctype.0 == 'company' or result.doctype.0 == 'company' %}
+
+<div class="search-result">
+    <div class="row" >
+        <div class="col-md-1" style="border:0px solid black ; vertical-align:middle">
+         <div class="crop">
+        {% if result.logo != None%}
+            <img style="width:100%; max-width:100px; margin-top:10px" src='{{result.logo}}'/>
+        {% else%}
+            <img style="width:100%; max-width:100px;  margin-top:10px" src='http://frameconcepts.com/wp-content/uploads/2016/06/Enterprise.png'/>
+        {% endif%}
+        </div>
+        </div>
+        <div class="col-md-10" style="border:0px solid black">
+            <h5>{{result.company_name}}</h5>
+            <p>{{result.website}}</p>
+            <p>
+                {% if result.headquarter != None%}
+                    Headquarter: {{result.headquarter}}
+                {% endif%}
+                {% if result.size != None%}
+                    Size: {{result.size}}
+                {% endif%}
+                {% if result.founded != None%}
+                    Founded: {{result.founded}}
+                {% endif%}
+                {% if result.industry != None%}
+                    Industry: {{result.industry}}
+                {% endif%}
+                {% if result.revenue != None%}
+                    Revenue: {{result.revenue}}
+                {% endif%}
+                {% if result.competitors != None%}
+                    Competitors: {{result.competitors}}
+                {% endif%}
+            </p>
+        </div>
+    </div>
+</div>
+{% endif%}
+
+
+
+{% if result.doctype.0 == 'glassdoor_review' or result.doctype.0 == 'indeed_review' %}
+<div class="search-result">
+    <div class="row">
+        <div class="col-md-15">
+            <h5>Review - {{result.title}} - {{result.company_name}}</h5>
+            <p>{{result}}</p>
+        </div>
+    </div>
+</div>
+{% endif%}
+
+
+
+{% if result.doctype.0 == 'glassdoor_interview' %}
+<div class="search-result">
+    <div class="row">
+        <div class="col-md-15">
+            <h5>Interview - {{result.title}} - {{result.company_name}}</b></h5>
+            <p>{{result}}</p>
+        </div>
+    </div>
+</div>
+{% endif%}

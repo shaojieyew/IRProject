@@ -1,5 +1,23 @@
 {% extends 'base.html' %}
 {% block head %}
+
+{% if status == 'indexing' %}
+<script>
+
+$( document ).ready(function() {
+    setInterval(function() {
+        $.get("/indexing/check",
+            function(data, status){
+                if(data.status!='indexing'){
+                    window.location.href = "/indexing";
+                }
+        });
+    }, 3000);
+});
+</script>
+   
+{% endif %} 
+
 {% endblock %}
 {% block content %}
         {% if deleted == 1 %}
@@ -7,6 +25,7 @@
                     alert("deleted");
                 </script>
         {% endif %}
+        
         <div class="post">
               <h1 class="my-4">Indexing
               </h1>
@@ -26,17 +45,32 @@
                     }
                     </script>
                     {% else %} 
-                
+                <div style="width:300px"> 
+                <p>
+                     <label for="index_option">Index options:  </label>
+                        <select id="index_option"  class="form-control">
+                         <option value="all">All</option>
+                         <option value="company">Companies</option>
+                         <option value="glassdoor_review">Glassdoor Reviews</option>
+                         <option value="glassdoor_interview">Glassdoor Interview Questions</option>
+                         <option value="indeed_review">Indeed Glassdoor</option>
+                       </select>
+                       
+                </p>
+                </div>
                     <button class="btn btn-primary" id="btn_start_indexing"  onclick="onclick_btn_start_indexing()" type="button">Start Indexing</button>
                     <button class="btn btn-danger" id="btn_delete"  onclick="onclick_btn_delete_indexing()" type="button">Delete Index</button>
                     
                     <script>
                     function onclick_btn_start_indexing() {
-                        $.get("/indexing/start",{},
+                        var e = document.getElementById("index_option");
+                        var value = e.options[e.selectedIndex].value;
+                        $.get("/indexing/start?indexing_type="+value,{},
                             function(data, status){
                         });
                         document.getElementById("btn_start_indexing").innerText= "Starting ...";
                         document.getElementById("btn_start_indexing").disabled = true;
+                        document.getElementById("index_option").disabled = true;
                         document.getElementById("btn_delete").disabled = true;
                         setTimeout(function(){
                             window.location.href = "/indexing";
