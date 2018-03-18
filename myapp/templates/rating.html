@@ -1,0 +1,30 @@
+        {% if result.rating != None%}
+                  <div class="star-rating" >
+                    {{result.rating}}
+                    {% if result.rating >= 1%}
+                        <span class="fa fa-star" data-rating="1"></span>
+                    {% else%}
+                        <span class="fa fa-star-o" data-rating="1"></span>
+                    {% endif%}
+                    {% if result.rating >= 2%}
+                        <span class="fa fa-star" data-rating="2"></span>
+                    {% else%}
+                        <span class="fa fa-star-o" data-rating="2"></span>
+                    {% endif%}
+                    {% if result.rating >= 3%}
+                        <span class="fa fa-star" data-rating="3"></span>
+                    {% else%}
+                        <span class="fa fa-star-o" data-rating="3"></span>
+                    {% endif%}
+                    {% if result.rating >= 4%}
+                        <span class="fa fa-star" data-rating="4"></span>
+                    {% else%}
+                        <span class="fa fa-star-o" data-rating="4"></span>
+                    {% endif%}
+                    {% if result.rating >= 5%}
+                        <span class="fa fa-star" data-rating="5"></span>
+                    {% else%}
+                        <span class="fa fa-star-o" data-rating="5"></span>
+                    {% endif%}
+                  </div>
+        {% endif%}

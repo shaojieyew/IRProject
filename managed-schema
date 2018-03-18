@@ -438,61 +438,58 @@
   <fieldType name="tlong" class="solr.TrieLongField" positionIncrementGap="0" docValues="true" precisionStep="8"/>
   <fieldType name="tlongs" class="solr.TrieLongField" positionIncrementGap="0" docValues="true" multiValued="true" precisionStep="8"/>
   <field name="_root_" type="string" docValues="false" indexed="true" stored="false"/>
-  <field name="spellchecktext" type="text_general" termPositions="false" termVectors="false" indexed="true" termOffsets="false" stored="true"/>
- 
   <field name="_text_" type="text_general" multiValued="true" indexed="true" stored="false"/>
   <field name="_version_" type="long" indexed="false" stored="false"/>
-  <field name="adviceMgmt" type="text_general" indexed="true" termOffsets="true" stored="true" termPositions="true" termPayloads="true" termVectors="true"/>
-  <field name="adviceMgmt_tag" type="text_general" indexed="true" termOffsets="true" stored="true" termPositions="true" termPayloads="true" termVectors="true"/>
+  <field name="adviceMgmt" type="text_general" indexed="true" termOffsets="true" stored="true" termPayloads="true" termPositions="true" termVectors="true"/>
+  <field name="adviceMgmt_tag" type="text_general" indexed="true" termOffsets="true" stored="true" termPayloads="true" termPositions="true" termVectors="true"/>
   <field name="benefit_rating" type="tdoubles"/>
   <field name="company_name" type="text_general" indexed="true" termOffsets="true" stored="true" termPayloads="true" termPositions="true" termVectors="true"/>
   <field name="company_name_tag" type="text_general" indexed="true" termOffsets="true" stored="true" termPayloads="true" termPositions="true" termVectors="true"/>
-  <field name="competitors" type="text_general" indexed="true" termOffsets="true" stored="true" termPositions="true" termPayloads="true" termVectors="true"/>
-  <field name="competitors_tag" type="text_general" indexed="true" termOffsets="true" stored="true" termPositions="true" termPayloads="true" termVectors="true"/>
-  <field name="cons" type="text_general" indexed="true" termOffsets="true" stored="true" termPositions="true" termPayloads="true" termVectors="true"/>
-  <field name="cons_tag" type="text_general" indexed="true" termOffsets="true" stored="true" termPositions="true" termPayloads="true" termVectors="true"/>
+  <field name="competitors" type="text_general" indexed="true" termOffsets="true" stored="true" termPayloads="true" termPositions="true" termVectors="true"/>
+  <field name="competitors_tag" type="text_general" indexed="true" termOffsets="true" stored="true" termPayloads="true" termPositions="true" termVectors="true"/>
+  <field name="cons" type="text_general" indexed="true" termOffsets="true" stored="true" termPayloads="true" termPositions="true" termVectors="true"/>
+  <field name="cons_tag" type="text_general" indexed="true" termOffsets="true" stored="true" termPayloads="true" termPositions="true" termVectors="true"/>
   <field name="datetime" type="tdates"/>
   <field name="datetime_s" type="date" indexed="true" stored="true"/>
   <field name="doctype" type="strings"/>
   <field name="founded" type="strings"/>
-  <field name="headquarter" type="text_general" indexed="true" termOffsets="true" stored="true" termPositions="true" termPayloads="true" termVectors="true"/>
-  <field name="headquarter_tag" type="text_general" indexed="true" termOffsets="true" stored="true" termPositions="true" termPayloads="true" termVectors="true"/>
+  <field name="headquarter" type="text_general" indexed="true" termOffsets="true" stored="true" termPayloads="true" termPositions="true" termVectors="true"/>
+  <field name="headquarter_tag" type="text_general" indexed="true" termOffsets="true" stored="true" termPayloads="true" termPositions="true" termVectors="true"/>
   <field name="id" type="string" multiValued="false" indexed="true" required="true" stored="true"/>
-
-  <field name="industry" type="text_general" indexed="true" termOffsets="true" stored="true" termPositions="true" termPayloads="true" termVectors="true"/>
-  <field name="industry_tag" type="text_general" indexed="true" termOffsets="true" stored="true" termPositions="true" termPayloads="true" termVectors="true"/>
-
-  <field name="interview_details" type="text_general" indexed="true" termOffsets="true" stored="true" termPositions="true" termPayloads="true" termVectors="true"/>
-  <field name="interview_details_tag" type="text_general" indexed="true" termOffsets="true" stored="true" termPositions="true" termPayloads="true" termVectors="true"/>
-
-  <field name="interview_question" type="text_general" indexed="true" termOffsets="true" stored="true" termPositions="true" termPayloads="true" termVectors="true"/>
-  <field name="interview_question_tag" type="text_general" indexed="true" termOffsets="true" stored="true" termPositions="true" termPayloads="true" termVectors="true"/>
+  <field name="industry" type="text_general" indexed="true" termOffsets="true" stored="true" termPayloads="true" termPositions="true" termVectors="true"/>
+  <field name="industry_tag" type="text_general" indexed="true" termOffsets="true" stored="true" termPayloads="true" termPositions="true" termVectors="true"/>
+  <field name="interview_details" type="text_general" indexed="true" termOffsets="true" stored="true" termPayloads="true" termPositions="true" termVectors="true"/>
+  <field name="interview_details_tag" type="text_general" indexed="true" termOffsets="true" stored="true" termPayloads="true" termPositions="true" termVectors="true"/>
+  <field name="interview_question" type="text_general" indexed="true" termOffsets="true" stored="true" termPayloads="true" termPositions="true" termVectors="true"/>
+  <field name="interview_question_tag" type="text_general" indexed="true" termOffsets="true" stored="true" termPayloads="true" termPositions="true" termVectors="true"/>
   <field name="job_culture" type="tdoubles"/>
   <field name="job_prospect_rating" type="tdoubles"/>
   <field name="link" type="strings"/>
   <field name="location" type="strings"/>
   <field name="logo" type="strings"/>
   <field name="management_rating" type="tdoubles"/>
+  <field name="o_url" type="strings"/>
   <field name="opinion1" type="strings"/>
   <field name="opinion2" type="strings"/>
   <field name="opinion3" type="strings"/>
-  <field name="position" type="text_general" indexed="true" termOffsets="true" stored="true" termPositions="true" termPayloads="true" termVectors="true"/>
-  <field name="position_tag" type="text_general" indexed="true" termOffsets="true" stored="true" termPositions="true" termPayloads="true" termVectors="true"/>
-
-  <field name="pros" type="text_general" indexed="true" termOffsets="true" stored="true" termPositions="true" termPayloads="true" termVectors="true"/>
-  <field name="pros_tag" type="text_general" indexed="true" termOffsets="true" stored="true" termPositions="true" termPayloads="true" termVectors="true"/>
+  <field name="position" type="text_general" indexed="true" termOffsets="true" stored="true" termPayloads="true" termPositions="true" termVectors="true"/>
+  <field name="position_tag" type="text_general" indexed="true" termOffsets="true" stored="true" termPayloads="true" termPositions="true" termVectors="true"/>
+  <field name="pros" type="text_general" indexed="true" termOffsets="true" stored="true" termPayloads="true" termPositions="true" termVectors="true"/>
+  <field name="pros_tag" type="text_general" indexed="true" termOffsets="true" stored="true" termPayloads="true" termPositions="true" termVectors="true"/>
   <field name="rating" type="floats" indexed="true" stored="true"/>
   <field name="rating_s" type="float" indexed="true" stored="true"/>
   <field name="result1" type="strings"/>
   <field name="result2" type="strings"/>
   <field name="result3" type="strings"/>
   <field name="revenue" type="strings"/>
-  <field name="review_description" type="text_general" indexed="true" termOffsets="true" stored="true" termPositions="true" termPayloads="true" termVectors="true"/>
-  <field name="review_description_tag" type="text_general" indexed="true" termOffsets="true" stored="true" termPositions="true" termPayloads="true" termVectors="true"/>
+  <field name="review_description" type="text_general" indexed="true" termOffsets="true" stored="true" termPayloads="true" termPositions="true" termVectors="true"/>
+  <field name="review_description_tag" type="text_general" indexed="true" termOffsets="true" stored="true" termPayloads="true" termPositions="true" termVectors="true"/>
   <field name="review_id" type="strings"/>
   <field name="size" type="strings"/>
-  <field name="title" type="text_general" indexed="true" termOffsets="true" stored="true" termPositions="true" termPayloads="true" termVectors="true"/>
-  <field name="title_tag" type="text_general" indexed="true" termOffsets="true" stored="true" termPositions="true" termPayloads="true" termVectors="true"/>
+  <field name="source" type="strings"/>
+  <field name="spellchecktext" type="text_general" termPositions="false" termVectors="false" indexed="true" termOffsets="false" stored="true"/>
+  <field name="title" type="text_general" indexed="true" termOffsets="true" stored="true" termPayloads="true" termPositions="true" termVectors="true"/>
+  <field name="title_tag" type="text_general" indexed="true" termOffsets="true" stored="true" termPayloads="true" termPositions="true" termVectors="true"/>
   <field name="type" type="strings"/>
   <field name="video" type="strings"/>
   <field name="website" type="strings"/>

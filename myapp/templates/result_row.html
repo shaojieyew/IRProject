@@ -1,67 +1,63 @@
 
-{% if result.doctype.0 == 'company' or result.doctype.0 == 'company' %}
-
-<div class="search-result">
-    <div class="row" >
-        <div class="col-md-1" style="border:0px solid black ; vertical-align:middle">
-         <div class="crop">
+<div class="search-result" >
+    <div class="row">
         {% if result.logo != None%}
+        <div class="col-md-1" style="border:0px solid black ; vertical-align:middle">
             <img style="width:100%; max-width:100px; margin-top:10px" src='{{result.logo}}'/>
+        </div>
+        <div class="col-md-11" style="border:0px solid black">
         {% else%}
-            <img style="width:100%; max-width:100px;  margin-top:10px" src='http://frameconcepts.com/wp-content/uploads/2016/06/Enterprise.png'/>
+        <div class="col-md-1" style="border:0px solid black ; vertical-align:middle">
+            <img style="width:100%; max-width:100px; margin-top:10px" src='https://d3g919u5f14ld1.cloudfront.net/assets/images/users/default-avatar.svg'/>
+        </div>
+        <div class="col-md-11" style="border:0px solid black">
         {% endif%}
-        </div>
-        </div>
-        <div class="col-md-10" style="border:0px solid black">
-            <h5>{{result.company_name}}</h5>
-            <p>{{result.website}}</p>
+        
+        
+        
+        {% if result.doctype.0 == 'company' or result.doctype.0 == 'company' %}
+            <a href="{{result.o_url}}"><h5 style="display: inline;"class="result-title">{{result.search_title|safe}} |
+            {% if result.source == 'glassdoor' %} Glassdoor {% endif%}
+            {% if result.source == 'indeed' %} Indeed {% endif%}
+            </h5 class="result-title"></a>
+             {% include "rating.html" %}              
+             
+             {% for website in result.website %}
+                &nbsp;<a href="https://{{website}} ">
+                        <span class="fa fa-external-link"></span>
+                </a>  
+             {% endfor %} 
+            
+            {% if result.video != None %}
+                &nbsp;<a href="{{result.video|safe}} ">
+                        <span class="fa fa-youtube-play"></span>
+                </a>  
+            {% endif%}
             <p>
-                {% if result.headquarter != None%}
-                    Headquarter: {{result.headquarter}}
-                {% endif%}
-                {% if result.size != None%}
-                    Size: {{result.size}}
-                {% endif%}
-                {% if result.founded != None%}
-                    Founded: {{result.founded}}
-                {% endif%}
-                {% if result.industry != None%}
-                    Industry: {{result.industry}}
-                {% endif%}
-                {% if result.revenue != None%}
-                    Revenue: {{result.revenue}}
-                {% endif%}
-                {% if result.competitors != None%}
-                    Competitors: {{result.competitors}}
-                {% endif%}
-            </p>
+            {{result.search_description|safe}}</p>
+        {% endif%}
+
+        {% if result.doctype.0 == 'glassdoor_review' or result.doctype.0 == 'indeed_review' %}
+
+            <a href="{{result.link}}"><h5 class="result-title">{{result.search_title|safe}} |
+            {% if result.doctype.0 == 'glassdoor_review' %} Glassdoor {% endif%}
+            {% if result.doctype.0 == 'indeed_review' %} Indeed {% endif%}
+            </h5 class="result-title"></a>
+            {% include "rating.html" %} 
+            <p>{{result.search_description|safe}}</p>
+        {% endif%}
+
+        {% if result.doctype.0 == 'glassdoor_interview' %}
+            <a href="{{result.link}}"><h5 class="result-title">{{result.search_title|safe}} |
+            {% if result.doctype.0 == 'glassdoor_interview' %} Glassdoor {% endif%}
+            </h5 class="result-title"></a>
+            {% include "rating.html" %} 
+            <p>{{result.search_description|safe}}</p>
+        {% endif%}
+
+
+
         </div>
     </div>
 </div>
-{% endif%}
 
-
-
-{% if result.doctype.0 == 'glassdoor_review' or result.doctype.0 == 'indeed_review' %}
-<div class="search-result">
-    <div class="row">
-        <div class="col-md-15">
-            <h5>Review - {{result.title}} - {{result.company_name}}</h5>
-            <p>{{result}}</p>
-        </div>
-    </div>
-</div>
-{% endif%}
-
-
-
-{% if result.doctype.0 == 'glassdoor_interview' %}
-<div class="search-result">
-    <div class="row">
-        <div class="col-md-15">
-            <h5>Interview - {{result.title}} - {{result.company_name}}</b></h5>
-            <p>{{result}}</p>
-        </div>
-    </div>
-</div>
-{% endif%}

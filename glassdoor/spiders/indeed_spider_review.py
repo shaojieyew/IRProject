@@ -121,15 +121,15 @@ class GlassdoorSpider(scrapy.Spider):
 
             
     def parse_company_detail(self, response):
+        o_url = response.request.url
         company_name = response.css('div.cmp-company-name::text').extract_first().strip()
         logo = response.xpath('//div[@id=\'cmp-header-logo\']/img/@src').extract_first()
         website = response.xpath('//a[@data-tn-element=\'companyLink[]\']/@href').extract()
         headquarter = response.xpath('//dl[@id=\'cmp-company-details-sidebar\']/dd[preceding-sibling::dt/text()[1]=\'Headquarters\']/text()').extract_first()
         industry = response.xpath('//dl[@id=\'cmp-company-details-sidebar\']/dd[preceding-sibling::dt/text()=\'Industry\']//a[@data-tn-element=\'industryLink\']/text()').extract_first()
         size = response.xpath('//dl[@id=\'cmp-company-details-sidebar\']/dd[preceding-sibling::dt/text()=\'Employees\']/text()').extract_first()
-        revenue = response.xpath('//dl[@id=\'cmp-company-details-sidebar\']/dd[preceding-sibling::dt/text()=\'Revenue\']/text()').extract_first()
-        website = ','.join(website)     
-        data = {'company_name':company_name,'logo':logo,'website':website,'headquarter':headquarter,'size':size,'revenue':revenue,
+        revenue = response.xpath('//dl[@id=\'cmp-company-details-sidebar\']/dd[preceding-sibling::dt/text()=\'Revenue\']/text()').extract_first()    
+        data = {'source':'indeed','o_url':o_url,'company_name':company_name,'logo':logo,'website':website,'headquarter':headquarter,'size':size,'revenue':revenue,
         'industry':industry}
         
         fileLocation = 'crawled_data/company'
@@ -137,11 +137,9 @@ class GlassdoorSpider(scrapy.Spider):
             os.makedirs(fileLocation)
         my_file = Path('crawled_data/company/'+company_name+'.json')
         if not(my_file.is_file()):
-            print("@@@@@@@")
             file = open('crawled_data/company/'+company_name+'.json', 'w')
             json.dump(data, file)
             file.close()
-        print("#####")
         review_url = response.xpath('//a[@data-tn-element=\'reviews-countLink\']/@href').extract_first()
         review_url = 'https://www.indeed.com'+review_url
         url = self.pop_url()
@@ -161,6 +159,7 @@ class GlassdoorSpider(scrapy.Spider):
         #print('https://www.glassdoor.com'+interview_url)
 
     def parse_company_review(self, response):
+        o_url = response.request.url
         company_name = response.css('div.cmp-company-name::text').extract_first().strip()
         for review in response.css('div.cmp-review-container'):
             review_id = review.css('div.cmp-review::attr(data-tn-entityid)').extract_first()
@@ -181,7 +180,7 @@ class GlassdoorSpider(scrapy.Spider):
             
             overall_rating = (int(work_life_balance_rating)+int(benefit_rating)+int(job_prospect_rating)+int(management_rating)+int(job_culture_rating))/100
             
-            data = {'review_id':review_id,'company_name':company_name,'datetime':datetime,'title':title,'rating':overall_rating,'position':position,'location':location,'pros':pros,'cons':cons,'review_description':review_description,
+            data = {'source':'indeed','o_url':o_url,'review_id':review_id,'company_name':company_name,'datetime':datetime,'title':title,'rating':overall_rating,'position':position,'location':location,'pros':pros,'cons':cons,'review_description':review_description,
             'work_life_balance_rating':(int(work_life_balance_rating)/20),'benefit_rating':(int(benefit_rating)/20),'job_prospect_rating':(int(job_prospect_rating)/20),'management_rating':(int(management_rating)/20),'job_culture':(int(job_culture_rating)/20)}
             
             fileLocation = 'crawled_data/indeed_review'

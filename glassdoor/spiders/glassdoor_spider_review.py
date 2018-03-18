@@ -109,6 +109,7 @@ class GlassdoorSpider(scrapy.Spider):
             else:
                 os.remove("crawling.txt")
         else:
+            o_url = response.request.url
             company_name = response.css('div.header.cell.info').css('h1.strong.tightAll::text').extract_first().strip()
             logo = response.css('span.sqLogo.tighten.lgSqLogo.logoOverlay').css('img::attr(src)').extract_first()
             video = response.css('div.featured-video::attr(data-video-url)').extract_first()
@@ -122,7 +123,12 @@ class GlassdoorSpider(scrapy.Spider):
             competitors = response.xpath('//div[@class=\'infoEntity\' and label/text()[1]=\'Competitors\']/span[@class=\'value\']/text()').extract_first()
             if(company_name[(len(company_name)-8):] ==' Reviews' ):
                 company_name = company_name[:(len(company_name)-8)]    
-            data = {'company_name':company_name,'logo':logo,'video':video,'website':website,'headquarter':headquarter,'size':size,
+            
+            
+            websites = []
+            websites.append(website)
+            print(websites)
+            data = {'source':'glassdoor','o_url':o_url,'company_name':company_name,'logo':logo,'video':video,'website':websites,'headquarter':headquarter,'size':size,
             'founded':founded,'type':type,'industry':industry,'revenue':revenue,'competitors':competitors}
                 
             file = open('crawled_data/Company/'+company_name+'.json', 'w')
@@ -146,6 +152,7 @@ class GlassdoorSpider(scrapy.Spider):
                 os.remove("crawling.txt")
             
     def parse_company_detail(self, response):
+        o_url = response.request.url
         company_name = response.css('div.header.cell.info').css('h1.strong.tightAll::text').extract_first().strip()
         logo = response.css('span.sqLogo.tighten.lgSqLogo.logoOverlay').css('img::attr(src)').extract_first()
         video = response.css('div.featured-video::attr(data-video-url)').extract_first()
@@ -159,7 +166,12 @@ class GlassdoorSpider(scrapy.Spider):
         competitors = response.xpath('//div[@class=\'infoEntity\' and label/text()[1]=\'Competitors\']/span[@class=\'value\']/text()').extract_first()
         if(company_name[(len(company_name)-8):] ==' Reviews' ):
                 company_name = company_name[:(len(company_name)-8)]    
-        data = {'company_name':company_name,'logo':logo,'video':video,'website':website,'headquarter':headquarter,'size':size,
+        
+        
+        websites = []
+        websites.append(website)
+        print(websites)
+        data = {'source':'glassdoor','o_url':o_url,'company_name':company_name,'logo':logo,'video':video,'website':websites,'headquarter':headquarter,'size':size,
         'founded':founded,'type':type,'industry':industry,'revenue':revenue,'competitors':competitors}
         
         fileLocation = 'crawled_data/company'
@@ -188,6 +200,7 @@ class GlassdoorSpider(scrapy.Spider):
         #print('https://www.glassdoor.com'+interview_url)
 
     def parse_company_review(self, response):
+        o_url = response.request.url
         company_name = response.css('div.condensed.showHH').css('span::text').extract_first()
         if(company_name[(len(company_name)-8):] ==' Reviews' ):
             company_name = company_name[:(len(company_name)-8)]    
@@ -222,7 +235,7 @@ class GlassdoorSpider(scrapy.Spider):
     
             
             review_id = link.split("/")[-1]
-            data = {'review_id':link,'company_name':company_name,'datetime':datetime,'title':title,'link':('https://www.glassdoor.com'+link),'rating':rating,'position':position,'pros':pros,'cons':cons,'adviceMgmt':adviceMgmt,'review_description':review_description,'opinion1':opinion1,'opinion2':opinion2,'opinion3':opinion3}
+            data = {'source':'glassdoor','o_url':o_url,'review_id':link,'company_name':company_name,'datetime':datetime,'title':title,'link':('https://www.glassdoor.com'+link),'rating':rating,'position':position,'pros':pros,'cons':cons,'adviceMgmt':adviceMgmt,'review_description':review_description,'opinion1':opinion1,'opinion2':opinion2,'opinion3':opinion3}
             
             fileLocation = 'crawled_data/glassdoor_review'
             if not os.path.exists(fileLocation):

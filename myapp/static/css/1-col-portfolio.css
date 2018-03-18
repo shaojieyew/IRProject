@@ -1,5 +1,14 @@
+.highlight{
+    font-weight:700;
+    background-color: #fff9a5;
+}
+.result-title{
+    font-weight:445
+}
 
-
+.title-highlight{
+    font-weight:700;
+}
 body {
   padding-top: 54px;
 }
@@ -9,7 +18,13 @@ body {
     padding-top: 56px;
   }
 }
+.star-rating {
+  font-size:1.0em;
+  display:inline; 
+}
 
+.star-rating .fa-star{
+    color: #edb32d;}
 
 .pagination {
   margin-bottom: 15px;
@@ -40,6 +55,9 @@ body {
 }
 .search-result{
     margin-top:20px;
+}
+.search-result a{
+    color: #3465ba
 }
 
 .search-panel {
@@ -85,7 +103,6 @@ body {
     color:#49729b;
     font-weight:600;
 }
-
 
 .pagination {
     margin:10px auto 20px auto;
