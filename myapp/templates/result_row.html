@@ -3,13 +3,19 @@
     <div class="row">
         {% if result.logo != None%}
         <div class="col-md-1" style="border:0px solid black ; vertical-align:middle">
+          <a href="#" onclick="on_filter_company_byname_click('{{result.company_name}}'); return false;">
             <img style="width:100%; max-width:100px; margin-top:10px" src='{{result.logo}}'/>
+          </a>
         </div>
         <div class="col-md-11" style="border:0px solid black">
         {% else%}
         <div class="col-md-1" style="border:0px solid black ; vertical-align:middle">
+            
+          <a href="#" onclick="on_filter_company_byname_click('{{result.company_name}}'; return false;">
             <img style="width:100%; max-width:100px; margin-top:10px" src='https://d3g919u5f14ld1.cloudfront.net/assets/images/users/default-avatar.svg'/>
-        </div>
+        
+          </a>
+       </div>
         <div class="col-md-11" style="border:0px solid black">
         {% endif%}
         

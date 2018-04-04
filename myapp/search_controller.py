@@ -1,4 +1,5 @@
 from urllib.request import urlopen
+from django.utils.http import urlquote
 import simplejson
 from django.shortcuts import render
 from django.views.generic import TemplateView
@@ -24,12 +25,63 @@ class Search_View(TemplateView):
         filter_query = request.GET.get("fq")
         if(filter_query is None):
             filter_query='*:*'
+        filter_query_companyname = request.GET.get("companyname")
+        if(filter_query_companyname is None):
+            filter_query_companyname=''
         original_query = request.GET.get("q")
         query = original_query
         
         #searchDocument#########################################################################
-        response=Search_View.searchDocument(query,filter_query,page,rows);
+        response=Search_View.searchDocument(query,filter_query,page,rows,filter_query_companyname);
         document_found_count = response['response']['numFound']
+        facet_company = response['facet_counts']['facet_fields']["facet_text_en_nosplit"]
+        index=len(facet_company)-1
+        while(index>=0):
+            if not(str(facet_company[index]).isdigit()):
+                facet_company[index] = "("+str(facet_company[index+1])+") "+facet_company[index]
+                if(facet_company[index+1]==0):
+                    facet_company.pop(index+1);
+                    facet_company.pop(index);
+                else:
+                    facet_company.pop(index+1);
+            index=index-1
+        
+        doctype_count = [0,0,0]
+        facet_type = response['facet_counts']['facet_fields']["doctype"]
+        index=len(facet_type)-1
+        while(index>=0):
+            if not(str(facet_type[index]).isdigit()):
+                if (facet_type[index].find('interview')>=0):
+                    doctype_count[2]=doctype_count[2]+facet_type[index+1]
+                if (facet_type[index].find('review')>=0):
+                    doctype_count[1]=doctype_count[1]+facet_type[index+1]
+                if (facet_type[index].find('company')>=0):
+                    doctype_count[0]=doctype_count[0]+facet_type[index+1]
+            index=index-1
+        facet_type=[]
+        if(doctype_count[0]>0):
+            facet_type.append("("+str(doctype_count[0])+") Companies")
+        if(doctype_count[1]>0):
+            facet_type.append("("+str(doctype_count[1])+") Reviews")
+        if(doctype_count[2]>0):
+            facet_type.append("("+str(doctype_count[2])+") Interviews")
+        if(len(facet_type)<=1):
+            facet_type=[]
+        
+        facet_word = response['facet_counts']['facet_fields']["spellchecktext"]
+        index=len(facet_word)-1
+        while(index>=0):
+            if not(str(facet_word[index]).isdigit()):
+                if (facet_word[index+1]<50):
+                    facet_word.pop(index+1);
+                    facet_word.pop(index);
+            index=index-1
+      
+        facet_word=' '.join([str(x) for x in facet_word])
+        preprocessor = preprocess.PreprocessPipeline()
+        facet_word = preprocessor.processWithoutStemming_remove_query(facet_word,query)
+        if(len(facet_word)>15):
+            facet_word = facet_word[:15]
         
         #spellcheck#########################################################################
         corrected = original_query
@@ -54,10 +106,11 @@ class Search_View(TemplateView):
         #get documents of spellchecked query##############################################
         is_corrected_result = 0
         if(document_found_count==0):
-            response=Search_View.searchDocument(corrected,filter_query,page,rows);
+            response=Search_View.searchDocument(corrected,filter_query,page,rows,filter_query_companyname);
             document_found_count = response['response']['numFound']
             if(document_found_count>0):
                 is_corrected_result = 1
+            
         
         ##Load oringal json files#######################################################
         all_words='';
@@ -224,8 +277,8 @@ class Search_View(TemplateView):
         
         return render(request, 'results.html',
         context={'query': original_query,'results': r,'spellcorrect': corrected,
-        'document_found_count':document_found_count,'is_corrected_result':is_corrected_result,
-        'filter_query':filter_query,'pagination':pagination})
+        'document_found_count':document_found_count,'is_corrected_result':is_corrected_result,'filter_query_companyname':filter_query_companyname,
+        'filter_query':filter_query,'pagination':pagination,'facet_company':facet_company,'facet_type':facet_type,'facet_word':facet_word})
     
     def getSyno(query):
         a=['firm', 'corpor', 'enterpris', 'compani', 'ventur']
@@ -254,7 +307,7 @@ class Search_View(TemplateView):
             return h;
         return None;
     
-    def searchDocument(query,filter_query,page,rows):
+    def searchDocument(query,filter_query,page,rows,filter_query_companyname):
         if(len(query)>0):
             #preprocess query
             preprocessor = preprocess.PreprocessPipeline()
@@ -320,6 +373,8 @@ class Search_View(TemplateView):
             params.append('qf='+fieldboost)
             params.append('start='+str((int(page)-1)*int(rows)))
             params.append('fq='+filter_query)
+            if(len(filter_query_companyname)>0):
+                params.append('fq=facet_text_en_nosplit:"'+urlquote(filter_query_companyname)+'"')
             params.append('q=+'+query)
             params.append('mm='+str(int((len(processed_query))*0.75)))
         else:
@@ -328,9 +383,11 @@ class Search_View(TemplateView):
             params.append('wt=json')
             params.append('start='+str((int(page)-1)*int(rows)))
             params.append('fq='+filter_query)
+            if(len(filter_query_companyname)>0):
+                params.append('fq=facet_text_en_nosplit:"'+urlquote(filter_query_companyname)+'"')
             params.append('q=*:*')
         url_params = '&'.join(params)    
-        connection = urlopen('http://localhost:8983/solr/irproject/select?'+url_params)
+        connection = urlopen('http://localhost:8983/solr/irproject/select?'+url_params+'&facet.field=facet_text_en_nosplit&facet.field=spellchecktext&facet.field=doctype&facet.query='+query+'&facet=on')
         response = simplejson.load(connection)
         return response
         

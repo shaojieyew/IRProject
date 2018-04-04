@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.views.generic import TemplateView
 import twitter
 import subprocess
+import myapp
 import requests, base64
 import oauth2 as oauth2
 from twisted.internet import reactor
@@ -17,7 +18,8 @@ class CrawlerView(TemplateView):
     scraplist = []
     
     def crawler(request, **kwargs):
-        crawling_file = Path("crawling.txt")
+        dir_path =  os.path.dirname(myapp.__file__)+'\\..'+"\\crawling.txt"
+        crawling_file = Path(dir_path)
         is_crawling = 0
         if crawling_file.is_file():
             is_crawling = 1
@@ -25,9 +27,10 @@ class CrawlerView(TemplateView):
       
     def start_crawling(request, **kwargs):
         #start crawling
-        crawling_file = Path("crawling.txt")
+        dir_path =  os.path.dirname(myapp.__file__)+'\\..'+"\\crawling.txt"
+        crawling_file = Path(dir_path)
         if not(crawling_file.is_file()):
-            open('crawling.txt', 'w').close()
+            open(dir_path, 'w').close()
             keyword = request.GET.get("crawl_keyword")
             keyword.strip()
             crawler = None
@@ -38,8 +41,9 @@ class CrawlerView(TemplateView):
             if(request.GET.get("crawl_option")=='idr'):
                 crawler = 'indeed_company_review'
                 
+            os.chdir(os.path.dirname(myapp.__file__)+'\\..')
             if(len(keyword)>0):
-                os.system("scrapy crawl "+crawler+" -a keyword="+keyword)
+                os.system("scrapy crawl "+crawler+" -a keyword="+keyword.replace(' ','_'))
             else:
                 os.system("scrapy crawl "+crawler)  
         
@@ -47,18 +51,19 @@ class CrawlerView(TemplateView):
     def stop_crawling(request, **kwargs):
         #start crawling
         #os.system("scrapy crawl company_review")
-        crawling_file = Path("crawling.txt")
+        dir_path =  os.path.dirname(myapp.__file__)+'\\..'+"\\crawling.txt"
+        crawling_file = Path(dir_path)
         if crawling_file.is_file():
-            os.remove("crawling.txt")
+            os.remove(dir_path)
             
-        crawling_file = Path("crawling.txt")
         is_crawling = 0
         if crawling_file.is_file():
             is_crawling = 1
         return render(request, 'crawler.html', context={'is_crawling': is_crawling})
         
     def check_crawling(request, **kwargs):
-        crawling_file = Path("crawling.txt")
+        dir_path =  os.path.dirname(myapp.__file__)+'\\..'+"\\crawling.txt"
+        crawling_file = Path(dir_path)
         is_crawling = 0
         if crawling_file.is_file():
             is_crawling = 1

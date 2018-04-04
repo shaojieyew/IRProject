@@ -13,6 +13,7 @@ class PreprocessPipeline:
             PreprocessPipeline.nlp = StanfordCoreNLP(PreprocessPipeline.Stanford_corenlp_lib)
         return 
     
+    
     def process(self, words):
         if not (words is None):
             #tokenize 
@@ -21,6 +22,45 @@ class PreprocessPipeline:
             words = self.remove_stopword(words)
             #perform remove none alphabatic and perform porter stemming
             words = self.stemming(words)
+            return words
+        else:
+            return
+    
+    def processWithoutStemming_remove_query(self, words, query):
+        processed_query = self.process(query)
+        if not (words is None):
+            ps = PorterStemmer()
+            #tokenize 
+            words = PreprocessPipeline.nlp.word_tokenize(words)
+            #normalize to lower case, remove stopwords and punctuation
+            words = self.remove_stopword(words)
+            #perform remove none alphabatic and perform porter stemming
+            if not (words is None):
+                index=len(words)-1
+                while(index>=0):
+                    words[index]=self.remove_nonalpha(words[index])
+                    test=ps.stem(words[index])
+                    if(test in processed_query):
+                        words.pop(index)
+                    index=index-1
+                words= [x for x in words if x]
+            return words
+        else:
+            return    
+    
+    def processWithoutStemming(self, words):
+        if not (words is None):
+            #tokenize 
+            words = PreprocessPipeline.nlp.word_tokenize(words)
+            #normalize to lower case, remove stopwords and punctuation
+            words = self.remove_stopword(words)
+            #perform remove none alphabatic and perform porter stemming
+            if not (words is None):
+                index=0
+                for word in words:
+                    words[index]=self.remove_nonalpha(word)
+                    index=index+1
+                words= [x for x in words if x]
             return words
         else:
             return

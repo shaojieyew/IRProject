@@ -81,7 +81,51 @@ body {
     padding:10px 15px 10px 15px;
     border-radius:50px;
 }
+.closetagbtn:link, .closetagbtn:visited {
+    background-color: #ffcccc;
+    padding: 6px 20px;
+    margin-right:5px ;
+    text-align: center;
+    color:#555555;
+    text-decoration: none;
+    display: inline-block;
+    border-radius:10px;
+    border-color:#ffcccc;
+    border-width:1px;
+}
+
+.closetagbtn:hover, .closetagbtn:active {
+    background-color: #ffcccc;
+    border-color:#ffcccc;
+    border-width:1px;
+    color:#555555;
+}
+
+.tagbtn:link, .tagbtn:visited {
+    background-color: #eeeeee;
+    padding: 6px 20px;
+    color:#555555;
+    text-align: center;
+    margin-right:5px ;
+    text-decoration: none;
+    display: inline-block;
+    border-radius:10px;
+    border-color:#dddddd;
+    border-width:1px;
+}
+
+.tagbtn:hover, .tagbtn:active {
+    background-color: #dddddd;
+    border-color:#dddddd;
+    color:#555555;
+    border-width:1px;
+}
 .search-panel #search_box {
+    padding:15px 30px 15px 15px;
+    width:100%;
+    font-size: 22px;
+}
+.search-panel #search_bar_box {
     padding:15px 30px 15px 15px;
     width:100%;
     font-size: 22px;

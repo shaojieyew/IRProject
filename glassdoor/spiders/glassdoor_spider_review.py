@@ -14,6 +14,7 @@ class GlassdoorSpider(scrapy.Spider):
             if not (self.keyword is None) and len(self.keyword)>0:
                 keyword = self.keyword
                 keywordLen = len(self.keyword)
+                keyword.replace('_','-')
                 o_url ='https://www.glassdoor.com/Reviews/singapore-'+keyword+'-reviews-SRCH_IL.0,9_IM1123_KE10,'+str(keywordLen+10)+'_IP1.htm'
         
         
@@ -30,33 +31,33 @@ class GlassdoorSpider(scrapy.Spider):
         else:   
             fields=['company_name','datetime','title','link','rating','position','pros','cons','adviceMgmt','review_description','opinion1','opinion2','opinion3']
             
-            my_file = Path('crawling.txt')
+            my_file = Path(os.path.dirname(os.path.realpath(__file__))+"\\..\\..\\crawling.txt")
             if not(my_file.is_file()):
-                open('crawling.txt', 'w').close()
+                open(os.path.dirname(os.path.realpath(__file__))+"\\..\\..\\crawling.txt", 'w').close()
             yield scrapy.Request(url=o_url, callback=self.parse_companies_list)
 
     
     def pop_url(self):
         my_list=[]
-        my_file = Path('crawling.txt')
+        my_file = Path(os.path.dirname(os.path.realpath(__file__))+"\\..\\..\\crawling.txt")
         if not(my_file.is_file()):
             return
-        with open('crawling.txt', 'r') as f:
+        with open(os.path.dirname(os.path.realpath(__file__))+"\\..\\..\\crawling.txt", 'r') as f:
             my_list = [line.rstrip('\n') for line in f]
         if(len(my_list)==0):
             return None
         url = my_list.pop()
-        open('crawling.txt', 'w').close()
-        with open('crawling.txt', 'w') as f:
+        open(os.path.dirname(os.path.realpath(__file__))+"\\..\\..\\crawling.txt", 'w').close()
+        with open(os.path.dirname(os.path.realpath(__file__))+"\\..\\..\\crawling.txt", 'w') as f:
             for s in my_list:
                 f.write(s + '\n')
         return url
     def peek_url(self):
         my_list=[]
-        my_file = Path('crawling.txt')
+        my_file = Path(os.path.dirname(os.path.realpath(__file__))+"\\..\\..\\crawling.txt")
         if not(my_file.is_file()):
             return
-        with open('crawling.txt', 'r') as f:
+        with open(os.path.dirname(os.path.realpath(__file__))+"\\..\\..\\crawling.txt", 'r') as f:
             my_list = [line.rstrip('\n') for line in f]
         if(len(my_list)>0):
             url = my_list[-1]
@@ -65,14 +66,14 @@ class GlassdoorSpider(scrapy.Spider):
         
     def push_url(self,url):
         my_list=[]
-        my_file = Path('crawling.txt')
+        my_file = Path(os.path.dirname(os.path.realpath(__file__))+"\\..\\..\\crawling.txt")
         if not (my_file.is_file()):
             return
-        with open('crawling.txt', 'r') as f:
+        with open(os.path.dirname(os.path.realpath(__file__))+"\\..\\..\\crawling.txt", 'r') as f:
             my_list = [line.rstrip('\n') for line in f]
         my_list.append(url)
-        open('crawling.txt', 'w').close()
-        with open('crawling.txt', 'w') as f:
+        open(os.path.dirname(os.path.realpath(__file__))+"\\..\\..\\crawling.txt", 'w').close()
+        with open(os.path.dirname(os.path.realpath(__file__))+"\\..\\..\\crawling.txt", 'w') as f:
             for s in my_list:
                 f.write(s + '\n')
     
@@ -107,7 +108,7 @@ class GlassdoorSpider(scrapy.Spider):
                 if(url_arr[0]=='3'):
                     yield scrapy.Request(url=url_arr[1], callback=self.parse_company_review)
             else:
-                os.remove("crawling.txt")
+                os.remove(os.path.dirname(os.path.realpath(__file__))+"\\..\\..\\crawling.txt")
         else:
             o_url = response.request.url
             company_name = response.css('div.header.cell.info').css('h1.strong.tightAll::text').extract_first().strip()
@@ -149,7 +150,7 @@ class GlassdoorSpider(scrapy.Spider):
                 if(url_arr[0]=='3'):
                     yield scrapy.Request(url=url_arr[1], callback=self.parse_company_review)
             else:
-                os.remove("crawling.txt")
+                os.remove(os.path.dirname(os.path.realpath(__file__))+"\\..\\..\\crawling.txt")
             
     def parse_company_detail(self, response):
         o_url = response.request.url
@@ -195,7 +196,7 @@ class GlassdoorSpider(scrapy.Spider):
             if(url_arr[0]=='3'):
                 yield scrapy.Request(url=url_arr[1], callback=self.parse_company_review)
         else:
-            os.remove("crawling.txt")
+            os.remove(os.path.dirname(os.path.realpath(__file__))+"\\..\\..\\crawling.txt")
         #interview_url = response.css('a.interviews::attr(href)').extract_first()
         #print('https://www.glassdoor.com'+interview_url)
 
@@ -261,5 +262,5 @@ class GlassdoorSpider(scrapy.Spider):
             if(url_arr[0]=='3'):
                 yield scrapy.Request(url=url_arr[1], callback=self.parse_company_review)
         else:
-            os.remove("crawling.txt")
+            os.remove(os.path.dirname(os.path.realpath(__file__))+"\\..\\..\\crawling.txt")
                 
