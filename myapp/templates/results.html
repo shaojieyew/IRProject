@@ -21,7 +21,7 @@
         var count=0;
         for (var i = (res.length-1); i >=0 ; i--) {
             if(res[i].length>0){
-                if(stop_words.indexOf(res[i].toLowerCase())==-1){
+                if(stop_words.indexOf(res[i].toLowerCase())==-1&&!is_numeric(res[i]) ){
                     var node = document.createElement("a");      
                     var span = document.createElement("span");    
                     var span1 = document.createElement("span");     
@@ -55,7 +55,9 @@
         form = document.getElementById("search-form");
         form.submit();
     };
-    
+    function is_numeric(str){
+        return /^\d+$/.test(str);
+    }
     function on_word_expander_click(e){
         search_box = document.getElementById("search_bar_box");
         form = document.getElementById("search-form");
@@ -151,10 +153,17 @@
               <tr>
               <td style="vertical-align:top; width:150px ; padding-right:20px; padding-top:50px">
               <div>
+              
               {% if facet_type %}
                 <div style="border-bottom:1px solid black; margin-bottom:20px">
                {% for type in facet_type %}
-                    <a  style="display:block; margin-bottom:10px; font-size:0.8em" href="#" class="type_filter"  onClick="on_filter_type_click(this); return false;"> {{type}} </a>
+                {% if not filter_query == '*:*' %}
+                    <a  style="display:block; margin-bottom:10px; font-size:0.8em" href="#" class="type_filter"  onClick="on_filter_type_click(this); return false;"> <span style="font-size:20px;  text-decoration:none;margin-right:5px" class="fa">&#xf00d;</span> {{type}} </a>
+                {% else %}                     
+                   <a  style="display:block; margin-bottom:10px; font-size:0.8em" href="#" class="type_filter"  onClick="on_filter_type_click(this); return false;"> {{type}} </a>
+                
+              {% endif %}
+              
               {% endfor %}
                 </div>
               {% endif %}
@@ -162,7 +171,7 @@
               <div id="company_list" >
               {% for company in facet_company %}
                 {% if not filter_query_companyname == '' %}
-                    <a  style="display:block; margin-bottom:10px; font-size:0.8em" href="#" class="company_filter "  onClick="on_filter_company_click(this); return false;"> <span style="font-size:20px" class="fa">&#xf00d;</span>{{company}} </a>
+                    <a  style="display:block; margin-bottom:10px; font-size:0.8em" href="#" class="company_filter"  onClick="on_filter_company_click(this); return false;"> <span style="font-size:20px; text-decoration:none;margin-right:5px" class="fa">&#xf00d;</span>{{company}} </a>
                     {% else %}    
                   <a  style="display:block; margin-bottom:10px; font-size:0.8em" href="#" class="company_filter"  onClick="on_filter_company_click(this); return false;"> {{company}}</a>
                     {% endif %}
@@ -173,7 +182,7 @@
               </td>
               
               <td style="vertical-align:top;"> 
-              <div id="tag_list" style="padding-bottom:20px" >
+              <div id="tag_list"  style="padding-bottom:5px; margin-bottom:10px;  display: flex;flex-wrap: nowrap;overflow-x: auto; width:900px;">
               {% for word in facet_word %}
                 <a href="#" class="tagbtn"  onClick="on_word_expander_click(this); return false;"> {{word}} </a>
               {% endfor %}
@@ -190,9 +199,9 @@
               </h5>
               {% endif %}
               {% endif %}
-              <h3 >Found {{document_found_count}} Results
+              <h3 >Found {{document_found_count}} Results 
               </h3>
-              
+              in {{query_time}} miliseconds
               {% for result in results %}
                     {% include "result_row.html" %} 
               {% endfor %}

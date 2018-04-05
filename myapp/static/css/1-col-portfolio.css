@@ -1,4 +1,4 @@
-.highlight{
+.DEWDSVWER{
     font-weight:700;
     background-color: #fff9a5;
 }
@@ -6,7 +6,7 @@
     font-weight:445
 }
 
-.title-highlight{
+.EDCWSASDFESSADWE{
     font-weight:700;
 }
 body {
@@ -171,3 +171,22 @@ body {
 }
 
 .pagination a:hover:not(.active) {background-color: #ddd;}
+
+::-webkit-scrollbar {
+    width: 15px;
+    height: 7px;
+}
+
+::-webkit-scrollbar-track {
+    box-shadow: inset 0 0 5px grey; 
+    border-radius: 10px;
+}
+ 
+::-webkit-scrollbar-thumb {
+    background: #888888; 
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #444444; 
+}

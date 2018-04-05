@@ -1,6 +1,7 @@
 
-<div class="search-result" >
+<div class="search-result" >       
     <div class="row">
+
         {% if result.logo != None%}
         <div class="col-md-1" style="border:0px solid black ; vertical-align:middle">
           <a href="#" onclick="on_filter_company_byname_click('{{result.company_name}}'); return false;">
@@ -50,7 +51,12 @@
             {% if result.doctype.0 == 'indeed_review' %} Indeed {% endif%}
             </h5 class="result-title"></a>
             {% include "rating.html" %} 
-            <p>{{result.search_description|safe}}</p>
+            <p>{{result.search_description|safe}}
+            <br/>
+            <span style="color:#777777">
+            {{result.datetime}}
+            </span>
+            </p>
         {% endif%}
 
         {% if result.doctype.0 == 'glassdoor_interview' %}
@@ -58,7 +64,11 @@
             {% if result.doctype.0 == 'glassdoor_interview' %} Glassdoor {% endif%}
             </h5 class="result-title"></a>
             {% include "rating.html" %} 
-            <p>{{result.search_description|safe}}</p>
+            <p>{{result.search_description|safe}}
+            <br/>
+            <span style="color:#777777">
+            {{result.datetime}}
+            </span></p>
         {% endif%}
 
 

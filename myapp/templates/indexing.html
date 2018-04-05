@@ -31,7 +31,10 @@ $( document ).ready(function() {
               </h1>
                <div>
                 <p >
-                <p>
+                <table>
+                <tr>
+                <td style="vertical-align:top">
+                                <p>
                     {% if status == 'indexing' %}
                     <h4>
                     We are indexing ...
@@ -86,6 +89,17 @@ $( document ).ready(function() {
                 
                 {% endif %}
                 </p>
+                </td>
+                <td style="padding-left:100px; vertical-align:top">
+                {% for mykey,myvalue in stats.items %}
+                    
+                    <h3>{{ mykey }} : {{ myvalue }}</h3>
+
+                {% endfor %}
+                </td>
+                </tr>
+                </table>
+
                 </p>
                 
               </div>
