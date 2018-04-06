@@ -2,15 +2,19 @@ from stanfordcorenlp import StanfordCoreNLP
 from nltk.stem import PorterStemmer
 import re
 from django.conf import settings
+from nltk.stem.wordnet import WordNetLemmatizer
 
 class PreprocessPipeline:
     Stanford_corenlp_lib = settings.CORENLP
     Stopword_dictionary = Stanford_corenlp_lib+'\patterns\stopwords.txt'
     nlp = None
+    lmtzr = None
     
     def __init__(self):
         if(PreprocessPipeline.nlp is None):
             PreprocessPipeline.nlp = StanfordCoreNLP(PreprocessPipeline.Stanford_corenlp_lib)
+        if(PreprocessPipeline.lmtzr is None):
+            PreprocessPipeline.lmtzr = WordNetLemmatizer()
         return 
     
     
@@ -21,7 +25,7 @@ class PreprocessPipeline:
             #normalize to lower case, remove stopwords and punctuation
             words = self.remove_stopword(words)
             #perform remove none alphabatic and perform porter stemming
-            words = self.stemming(words)
+            words = self.lemmatizing(words)
             return words
         else:
             return
@@ -34,7 +38,7 @@ class PreprocessPipeline:
             words = PreprocessPipeline.nlp.word_tokenize(words)
             #normalize to lower case, remove stopwords and punctuation
             words = self.remove_stopword(words)
-            #perform remove none alphabatic and perform porter stemming
+            #perform remove none alphabatic and query
             if not (words is None):
                 index=len(words)-1
                 while(index>=0):
@@ -54,7 +58,7 @@ class PreprocessPipeline:
             words = PreprocessPipeline.nlp.word_tokenize(words)
             #normalize to lower case, remove stopwords and punctuation
             words = self.remove_stopword(words)
-            #perform remove none alphabatic and perform porter stemming
+            #perform remove none alphabatic
             if not (words is None):
                 index=0
                 for word in words:
@@ -65,10 +69,41 @@ class PreprocessPipeline:
         else:
             return
     
+    def process_stemming(self, words):
+        if not (words is None):
+            #tokenize 
+            words = self.nlp.word_tokenize(words)
+            #perform remove none alphabatic and perform porter stemming
+            words = self.stemming(words)
+            return words
+        else:
+            return
+    
+    def process_lemmatizing(self, words):
+        if not (words is None):
+            #tokenize 
+            words = self.nlp.word_tokenize(words)
+            #perform remove none alphabatic and perform lemmatizing
+            words = self.lemmatizing(words)
+            return words
+        else:
+            return
+    
+    
     def remove_nonalpha(self,charseq):
         if not (charseq is None):
             return re.sub('[^A-Za-z]', '', charseq) 
-        
+            
+    def lemmatizing(self,words):
+        if not (words is None):
+            index=0
+            for word in words:
+                words[index]=self.remove_nonalpha(word)
+                words[index]=PreprocessPipeline.lmtzr.lemmatize(words[index].lower())
+                index=index+1
+            return [x for x in words if x]
+        else:
+            return          
     def stemming(self,words):
         if not (words is None):
             ps = PorterStemmer()

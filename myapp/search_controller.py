@@ -294,7 +294,9 @@ class Search_View(TemplateView):
         'filter_query':filter_query,'pagination':pagination,'facet_company':facet_company,'facet_type':facet_type,'facet_word':facet_word,'query_time':query_time})
     
     def getSyno(query):
-        a=['firm', 'corpor', 'enterpris', 'compani']
+    
+        '''
+        a=['firm','corporate','enterprise','company']
         b=['competitor', 'rival', 'enemi', 'foe']
         c=['job', 'appoint', 'role', 'occup', 'employ', 'duti']
         d=['industri',  'trade', 'field']
@@ -304,6 +306,18 @@ class Search_View(TemplateView):
         h=['sad','disagre','irksom','troublesom','annoi','irrit','vexati','displeas','uncomfort','distress','appal','aw','dread','hate','detest','offens','obnoxi','repugn','repuls','revolt','disgust','distast']
         i=['great', 'good']
         j=['bad','nasti', 'horribl', 'terribl','worst','miser']
+        '''
+        a=['firm','corporate','enterprise','company']
+        b=['competitor','rival','enemy','foe']
+        c=['job','appointment','role','occupation','duties']
+        d=['industry','trade','field']
+        e=['pro','strength','benefit']
+        f=['con','weak','negative','disadvantage']
+        g=['enjoy','pleasure','nice','agreeable','satisfy','gratify','fun','happy','awesome','incred','impress','astonish','magnific']
+        h=['sad','disagree','irksome','troublesome','annoy','irrit','vexati','displeas','uncomfort','distress','appal','awful','dread','hate','detest','offens','obnoxi','repugn','repuls','revolt','disgust','distast']
+        i=['great','good']
+        j=['bad','nasty','horrible','terrible','worst','miserable']
+        
         if(query in a):
             return a;
         if(query in b):
