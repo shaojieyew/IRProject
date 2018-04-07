@@ -1,8 +1,0 @@
-﻿firm, corpor, enterpris, compani, ventur
-competitor, rival, challeng, oppon, oppos, adversari, antagonist, combat, enemi, foe, competit, opposit
-posit, job, post, appoint, role, occup, employ, duti, placement
-industri, busi, trade, field, line
-pro, strength, benefit
-con, weak, neg, disadvantag
-best,enjoy, pleas, pleasur, nice, agreeabl, satisfi, gratifi, good, fun, happi, great, awesom,amaz,incred,impress,wonder,spectacular,astonish,unbeliev,magnific,incred
-sad, disagre, irksom, troublesom, annoi, irrit, vexati, displeas, uncomfort, distress, nasti, horribl, appal, terribl, aw, dread, hate, detest, miser, abomin, execr, odiou, invidi, objection, offens, obnoxi, repugn, repuls, repel, revolt, disgust, distast, nauseat, unsavour

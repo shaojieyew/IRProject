@@ -95,14 +95,14 @@ body {
 }
 
 .closetagbtn:hover, .closetagbtn:active {
-    background-color: #ffcccc;
+    background-color: #ddaaaa;
     border-color:#ffcccc;
     border-width:1px;
     color:#555555;
 }
 
 .tagbtn:link, .tagbtn:visited {
-    background-color: #eeeeee;
+    background-color: #cccccc;
     padding: 6px 20px;
     color:#555555;
     text-align: center;
@@ -115,7 +115,7 @@ body {
 }
 
 .tagbtn:hover, .tagbtn:active {
-    background-color: #dddddd;
+    background-color: #aaaaaa;
     border-color:#dddddd;
     color:#555555;
     border-width:1px;
@@ -174,7 +174,7 @@ body {
 
 ::-webkit-scrollbar {
     width: 15px;
-    height: 7px;
+    height: 8px;
 }
 
 ::-webkit-scrollbar-track {

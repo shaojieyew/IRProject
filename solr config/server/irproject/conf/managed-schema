@@ -265,6 +265,21 @@
       <filter class="solr.SnowballPorterFilterFactory" language="Irish"/>
     </analyzer>
   </fieldType>
+  
+  <fieldType name="text_general_syn" class="solr.TextField" positionIncrementGap="100" multiValued="true">
+    <analyzer type="index">
+      <filter class="solr.SynonymGraphFilterFactory" expand="true" ignoreCase="true" synonyms="synonyms.txt"/>
+      <tokenizer class="solr.StandardTokenizerFactory"/>
+      <filter class="solr.StopFilterFactory" words="stopwords.txt" ignoreCase="true"/>
+      <filter class="solr.LowerCaseFilterFactory"/>
+    </analyzer>
+    <analyzer type="query">
+      <tokenizer class="solr.StandardTokenizerFactory"/>
+      <filter class="solr.StopFilterFactory" words="stopwords.txt" ignoreCase="true"/>
+      <filter class="solr.SynonymGraphFilterFactory" expand="true" ignoreCase="true" synonyms="synonyms.txt"/>
+      <filter class="solr.LowerCaseFilterFactory"/>
+    </analyzer>
+  </fieldType>
   <fieldType name="text_general" class="solr.TextField" positionIncrementGap="100" multiValued="true">
     <analyzer type="index">
       <tokenizer class="solr.StandardTokenizerFactory"/>
@@ -343,6 +358,12 @@
       <filter class="solr.ItalianLightStemFilterFactory"/>
     </analyzer>
   </fieldType>
+  <fieldType name="exact_match" class="solr.TextField" positionIncrementGap="100">
+            <analyzer>
+                <tokenizer class="solr.KeywordTokenizerFactory"/>
+                <filter class="solr.TrimFilterFactory"/>
+            </analyzer>
+ </fieldType>
   <fieldType name="text_ja" class="solr.TextField" autoGeneratePhraseQueries="false" positionIncrementGap="100">
     <analyzer>
       <tokenizer class="solr.JapaneseTokenizerFactory" mode="search"/>
@@ -452,6 +473,7 @@
   <field name="datetime" type="tdates"/>
   <field name="datetime_s" type="date" indexed="true" stored="true"/>
   <field name="doctype" type="strings"/>
+  <field name="facet_text_en_nosplit" type="exact_match" indexed="true" stored="false"/>
   <field name="founded" type="strings"/>
   <field name="headquarter" type="text_general" indexed="true" termOffsets="true" stored="true" termPayloads="true" termPositions="true" termVectors="true"/>
   <field name="headquarter_tag" type="text_general" indexed="true" termOffsets="true" stored="true" termPayloads="true" termPositions="true" termVectors="true"/>
@@ -488,6 +510,7 @@
   <field name="size" type="strings"/>
   <field name="source" type="strings"/>
   <field name="spellchecktext" type="text_general" termPositions="false" termVectors="false" indexed="true" termOffsets="false" stored="true"/>
+  <field name="all_tag" type="text_general_syn" termPositions="true" termVectors="true" indexed="true" termOffsets="true" stored="true"/>
   <field name="title" type="text_general" indexed="true" termOffsets="true" stored="true" termPayloads="true" termPositions="true" termVectors="true"/>
   <field name="title_tag" type="text_general" indexed="true" termOffsets="true" stored="true" termPayloads="true" termPositions="true" termVectors="true"/>
   <field name="type" type="strings"/>
@@ -579,17 +602,31 @@
   <dynamicField name="*_d" type="double" indexed="true" stored="true"/>
   <dynamicField name="*_p" type="location" indexed="true" stored="true"/>
   <dynamicField name="*_c" type="currency" indexed="true" stored="true"/>
+  <copyField source="company_name" dest="facet_text_en_nosplit"/>
+  <copyField source="rating" dest="rating_s"/>
+  <copyField source="datetime" dest="datetime_s"/>
   <copyField source="adviceMgmt" dest="spellchecktext"/>
   <copyField source="company_name" dest="spellchecktext"/>
   <copyField source="cons" dest="spellchecktext"/>
-  <copyField source="datetime" dest="datetime_s"/>
   <copyField source="industry" dest="spellchecktext"/>
   <copyField source="interview_details" dest="spellchecktext"/>
   <copyField source="interview_question" dest="spellchecktext"/>
   <copyField source="position" dest="spellchecktext"/>
   <copyField source="pros" dest="spellchecktext"/>
-  <copyField source="rating" dest="rating_s"/>
   <copyField source="review_description" dest="spellchecktext"/>
   <copyField source="title" dest="spellchecktext"/>
+  
+  <copyField source="adviceMgmt_tag" dest="all_tag"/>
+  <copyField source="company_name_tag" dest="all_tag"/>
+  <copyField source="cons_tag" dest="all_tag"/>
+  <copyField source="industry_tag" dest="all_tag"/>
+  <copyField source="interview_details_tag" dest="all_tag"/>
+  <copyField source="interview_question_tag" dest="all_tag"/>
+  <copyField source="position_tag" dest="all_tag"/>
+  <copyField source="pros_tag" dest="all_tag"/>
+  <copyField source="review_description_tag" dest="all_tag"/>
+  <copyField source="title_tag" dest="all_tag"/>
+  
   <copyField source="*" dest="_text_"/>
+  <similarity class="solr.ClassicSimilarityFactory"/>
 </schema>

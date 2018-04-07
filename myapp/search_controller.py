@@ -1,3 +1,5 @@
+
+from textblob import TextBlob
 import time
 import datetime
 from urllib.request import urlopen
@@ -9,12 +11,31 @@ from django.views.generic import TemplateView
 from django.conf import settings
 from collections import Counter
 from myapp.preprocess import preprocess
+
+from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.feature_extraction.text import TfidfTransformer
+from sklearn.linear_model import LinearRegression
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.naive_bayes import MultinomialNB
+from sklearn.linear_model import SGDClassifier
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.neural_network import MLPClassifier
+from sklearn import metrics
+from sklearn.ensemble import GradientBoostingClassifier
+from sklearn.ensemble import VotingClassifier
+from sklearn.ensemble import AdaBoostClassifier
+import numpy as np
+from sklearn.pipeline import Pipeline
+import pandas as pd
+
+
 import myapp
 import json
 import os
 import os.path
 import re
 import pysolr
+import pickle
 # Create your views here.
 class Search_View(TemplateView):
     dir_path =  os.path.dirname(myapp.__file__)+'\\..'
@@ -151,9 +172,11 @@ class Search_View(TemplateView):
                         except:
                             i=1
                             
-                            
+                classify_text=""            
                 if 'title' in data and not(data["title"] is None):
                     data["search_title"].append(data["title"]);
+                    if(data["doctype"][0]=="glassdoor_review" or data["doctype"][0]=="indeed_review"):
+                        classify_text = classify_text+data["title"]
                 if 'company_name' in data and not(data["company_name"] is None):
                     data["search_title"].append(data["company_name"]);
                 data["search_title"] = ' - '.join(data["search_title"])        
@@ -187,19 +210,25 @@ class Search_View(TemplateView):
                  
 
                 if 'pros' in data and not(data["pros"] is None):
-                    data["search_description"].append("Pros: "+data["pros"]);
+                    data["search_description"].append("Pros: "+data["pros"])
+                    if(data["doctype"][0]=="glassdoor_review"):
+                        classify_text = classify_text+data["pros"]
                 if 'cons' in data and not(data["cons"] is None):
-                    data["search_description"].append("Cons: "+data["cons"]);
+                    data["search_description"].append("Cons: "+data["cons"])
+                    if(data["doctype"][0]=="glassdoor_review"):
+                        classify_text = classify_text+data["cons"]
                 if 'adviceMgmt' in data and not(data["adviceMgmt"] is None):
                     data["search_description"].append("Advice to Management: "+data["adviceMgmt"]);
                 if 'review_description' in data and not(data["review_description"] is None):
+                    if(data["doctype"][0]=="indeed_review"):
+                        classify_text = classify_text+data["review_description"]
                     data["search_description"].append("Details: "+data["review_description"]);
                 if 'opinion1' in data and not(data["opinion1"] is None):
-                    data["search_description"].append(data["opinion1"]);
+                    data["search_description"].append(data["opinion1"])
                 if 'opinion2' in data and not(data["opinion2"] is None):
-                    data["search_description"].append(data["opinion2"]);
+                    data["search_description"].append(data["opinion2"])
                 if 'opinion3' in data and not(data["opinion3"] is None):
-                    data["search_description"].append(data["opinion3"]);
+                    data["search_description"].append(data["opinion3"])
 
                 data["search_description"] = ' '.join(data["search_description"])   
                 
@@ -213,6 +242,9 @@ class Search_View(TemplateView):
                 if 'rating' in data and not(data["rating"] is None):
                     data["rating"] = float(data["rating"]);
                 
+                
+                polarity = Search_View.classify_polarity(classify_text)
+                data["polarity"]=polarity
                 r.append(data) 
             
             except Exception as e: 
@@ -471,4 +503,43 @@ class Search_View(TemplateView):
         return "mul(sum(1,log("+str(query_tf)+")),log(if(eq(docfreq("+field+","+term+"),0),1,div(numdocs(),docfreq("+field+","+term+")))))"
        
        
+    def classify_polarity(paragraph):
+        if len(paragraph)==0 :
+            return 0
+        dir_path =  os.path.dirname(myapp.__file__)+'\\..'
+        with open(dir_path+'\\model.pkl', 'rb') as f:
+            model = pickle.load(f)
+        blob = TextBlob(paragraph)
+        polarity_index = 0
+        classification_index = 0
+        for sentence in blob.sentences:
+            polarity_index = polarity_index+ float(str(sentence.sentiment.polarity))
+            result = model.predict([str(sentence)])
+            if(result=="POSITIVE"):
+                classification_index=classification_index+1
+            if(result=="NEGATIVE"):
+                classification_index=classification_index-1
+               
+        polarity_index = polarity_index/len(blob.sentences)
         
+        
+        if(abs(polarity_index)>0.2):
+            if(polarity_index>0):
+                return  1
+            else:
+                if(polarity_index<0):
+                    return  -1
+        
+        #if textblob is <0.3 and >-0.3
+        value = 0
+        if(classification_index>0):
+            classification_index=1
+        if(classification_index<0):
+            classification_index=-1
+        #if textblob and our classification model agrees
+        if(classification_index*polarity_index>0):
+            if(classification_index<0):
+                value=-1
+            if(classification_index>0):
+                value=1
+        return value

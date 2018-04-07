@@ -99,7 +99,12 @@ class PreprocessPipeline:
             index=0
             for word in words:
                 words[index]=self.remove_nonalpha(word)
-                words[index]=PreprocessPipeline.lmtzr.lemmatize(words[index].lower())
+                noun=PreprocessPipeline.lmtzr.lemmatize(words[index].lower())
+                verb=PreprocessPipeline.lmtzr.lemmatize(words[index].lower(),"v")
+                if(len(noun)<len(verb)):
+                    words[index] = noun
+                else:
+                    words[index] = verb
                 index=index+1
             return [x for x in words if x]
         else:

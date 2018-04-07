@@ -1,0 +1,11 @@
+metrics:
+             precision    recall  f1-score   support
+
+   POSITIVE       0.81      0.93      0.86       112
+    NEUTRAL       0.64      0.38      0.48        47
+   NEGATIVE       0.85      0.89      0.87        46
+
+avg / total       0.78      0.80      0.78       205
+
+accuracy:
+0.79512195122

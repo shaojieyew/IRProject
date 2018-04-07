@@ -1,4 +1,4 @@
-
+{% load staticfiles %}
 <div class="search-result" >       
     <div class="row">
 
@@ -51,6 +51,16 @@
             {% if result.doctype.0 == 'indeed_review' %} Indeed {% endif%}
             </h5 class="result-title"></a>
             {% include "rating.html" %} 
+            
+            {% if result.polarity == 0%}
+                <img style="width:25px; height:25px; margin-left:14px; margin-top:-10px; " src='{% static "image/polarity_0.png" %}' alt=""/>
+            {% endif%}
+            {% if result.polarity == 1%}
+                <img style="width:25px; height:25px; margin-left:14px; margin-top:-10px; " src='{% static "image/polarity_1.png" %}' alt=""/>
+            {% endif%}
+            {% if result.polarity == -1%}
+                <img style="width:25px; height:25px; margin-left:14px; margin-top:-10px; " src='{% static "image/polarity_2.png" %}' alt=""/>
+            {% endif%}
             <p>{{result.search_description|safe}}
             <br/>
             <span style="color:#777777">
