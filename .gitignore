@@ -2,3 +2,5 @@
 *.json
 *.pyc
 /crawled_data/last_indexed.txt
+/Classifier/.idea/*
+*.iml
