@@ -7,6 +7,7 @@ import os.path
 from django.conf import settings
 from pathlib import Path
 import re
+import time
 from myapp.preprocess import preprocess
 from myapp.solr_manager import indexer as solrIndexer 
 
@@ -89,15 +90,20 @@ class IndexManager:
             files = [os.path.join(search_dir, f) for f in files]
             files.sort(key=lambda x: os.path.getmtime(x))
             print(search_dir)
+            start = time.process_time()
+            count = 0
             for file in files:
                 if (Path(indicate_indexing_file).is_file()):
                     #print(file)
                     self.process_file(file,preprocessor)
                     last_indexed[folder] = os.path.getmtime(file)
+                    count = count+1
                 else:
                     terminate=1
                     print(search_dir)
                     break
+                print (count)
+                print (time.process_time() - start)
             if terminate == 1:
                 break
         with open(last_indexed_timestamp_file, 'w') as file:

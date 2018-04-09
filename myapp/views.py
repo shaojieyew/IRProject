@@ -4,7 +4,6 @@ import twitter
 import subprocess
 import requests, base64
 import oauth2 as oauth2
-from twisted.internet import reactor
 import json
 import time
 import pysolr,json,argparse
