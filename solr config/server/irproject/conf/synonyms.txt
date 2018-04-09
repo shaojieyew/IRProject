@@ -1,10 +1,11 @@
 ﻿firm,corporate,enterprise,company
 competitor,rival,enemy,foe
 job,appointment,role,occupation,duties
-industry,trade,field
-pro,strength,benefit
+industry,field
+pro,strength,benefit,positive
 con,weak,negative,disadvantage
-enjoy,pleasure,nice,agreeable,satisfy,gratify,fun,happy,awesome,incred,impress,astonish,magnific
-sad,disagree,irksome,troublesome,annoy,irrit,vexati,displeas,uncomfort,distress,appal,awful,dread,hate,detest,offens,obnoxi,repugn,repuls,revolt,disgust,distast
-great,good
-bad,nasty,horrible,terrible,worst,miserable
+enjoy,pleasure,nice,agreeable,satisfy,gratify,fun,happy,awesome,incred,impress,astonish,magnific,love
+sad,disagree,irksome,troublesome,annoy,irrit,vexati,displeas,uncomfort,distress,appal,dread,hate,detest,offens,obnoxi,repugn,repuls,revolt,disgust,distast
+great,good,positive,awesome
+bad,nasty,horrible,terrible,worst,miserable,awful
+friendly,pleasure

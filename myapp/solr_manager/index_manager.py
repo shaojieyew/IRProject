@@ -148,6 +148,10 @@ class IndexManager:
                 if not (data[field] is None):
                     if (data[field].strip().lower() == 'unknown'):
                         data[field]=""
+                    #if(field!="company_name"):
+                        #result = preprocessor.process_with_stopword(data[field])
+                        #if len(result)>0 :
+                        #    data[field]=(' '.join(result)) 
                     result = preprocessor.process(data[field])
                     if len(result)>0 :
                         data[field+"_tag"]=(' '.join(result)) 

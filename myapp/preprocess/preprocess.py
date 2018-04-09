@@ -29,8 +29,25 @@ class PreprocessPipeline:
             return words
         else:
             return
-    
-    def processWithoutStemming_remove_query(self, words, query):
+            
+    def process_with_stopword(self, words):
+        if not (words is None):
+            #tokenize 
+            words = PreprocessPipeline.nlp.word_tokenize(words)
+            #normalize case
+            if not (words is None):
+                i=len(words)-1;
+                while 1:
+                    if i<0:
+                        break
+                    words[i] = words[i].lower()
+                    i=i-1  
+            #perform remove none alphabatic and perform porter stemming
+            words = self.lemmatizing(words)
+            return words
+        else:
+            return
+    def process_remove_query(self, words, query):
         processed_query = self.process(query)
         if not (words is None):
             ps = PorterStemmer()
@@ -43,7 +60,12 @@ class PreprocessPipeline:
                 index=len(words)-1
                 while(index>=0):
                     words[index]=self.remove_nonalpha(words[index])
-                    test=ps.stem(words[index])
+                    noun=PreprocessPipeline.lmtzr.lemmatize(words[index].lower())
+                    verb=PreprocessPipeline.lmtzr.lemmatize(words[index].lower(),"v")
+                    if(len(noun)<len(verb)):
+                        test = noun
+                    else:
+                        test = verb
                     if(test in processed_query):
                         words.pop(index)
                     index=index-1

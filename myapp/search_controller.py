@@ -40,7 +40,7 @@ import pickle
 class Search_View(TemplateView):
     dir_path =  os.path.dirname(myapp.__file__)+'\\..'
     def search(request, **kwargs):
-        
+        preprocessor = preprocess.PreprocessPipeline()
         start_time = time.time()
         #get query and page parameters from request###################################################
         rows = request.GET.get("r")
@@ -64,8 +64,8 @@ class Search_View(TemplateView):
 
         #spellcheck#########################################################################
         corrected = original_query
-        if(document_found_count<200 and len(original_query)>0):
-            spellcheckreq = 'http://localhost:8983/solr/irproject/spell?spellcheck.q='+original_query.replace(' ','%20')+'&spellcheck=true&fq='+filter_query+'&spellcheck.extendedResults=true&spellcheck.collate=true&wt=json'
+        if(document_found_count<200 and len(corrected)>0):
+            spellcheckreq = 'http://localhost:8983/solr/irproject/spell?spellcheck.q='+corrected.replace(' ','%20')+'&spellcheck=true&fq='+filter_query+'&spellcheck.extendedResults=true&spellcheck.collate=true&wt=json'
             
             try:
                 connection1 = urlopen(spellcheckreq)
@@ -73,18 +73,17 @@ class Search_View(TemplateView):
                 if(spellcheckedresult['spellcheck']['correctlySpelled'] == False):
                     if(len(spellcheckedresult['spellcheck']['collations'])>1):
                         corrected = spellcheckedresult['spellcheck']['collations'][1]['collationQuery']
-                        #preprocessor = preprocess.PreprocessPipeline()
-                        #processed_query1 = preprocessor.process(original_query)
-                        #processed_query2 = preprocessor.process(corrected)
-                        #if(processed_query1==processed_query2):
-                        #    corrected=''
+                        test = preprocessor.process_remove_query(corrected,original_query)
+                        print(test)
+                        if(len(test)==0):
+                            corrected=''
 
             except Exception as e: 
                 print(e)
         
         #get documents of spellchecked query##############################################
         is_corrected_result = 0
-        if(document_found_count==0):
+        if(document_found_count==0 and len(corrected)>0):
             response=Search_View.searchDocument(corrected,filter_query,page,rows,filter_query_companyname);
             document_found_count = response['response']['numFound']
             if(document_found_count>0):
@@ -136,8 +135,7 @@ class Search_View(TemplateView):
             index=index-1
       
         facet_word=' '.join([str(x) for x in facet_word])
-        preprocessor = preprocess.PreprocessPipeline()
-        facet_word = preprocessor.processWithoutStemming_remove_query(facet_word,query)
+        facet_word = preprocessor.process_remove_query(facet_word,query)
         if(len(facet_word)>15):
             facet_word = facet_word[:15]
         
@@ -342,13 +340,14 @@ class Search_View(TemplateView):
         a=['firm','corporate','enterprise','company']
         b=['competitor','rival','enemy','foe']
         c=['job','appointment','role','occupation','duties']
-        d=['industry','trade','field']
-        e=['pro','strength','benefit']
+        d=['industry','field']
+        e=['pro','strength','benefit','positive']
         f=['con','weak','negative','disadvantage']
-        g=['enjoy','pleasure','nice','agreeable','satisfy','gratify','fun','happy','awesome','incred','impress','astonish','magnific']
-        h=['sad','disagree','irksome','troublesome','annoy','irrit','vexati','displeas','uncomfort','distress','appal','awful','dread','hate','detest','offens','obnoxi','repugn','repuls','revolt','disgust','distast']
-        i=['great','good']
-        j=['bad','nasty','horrible','terrible','worst','miserable']
+        g=['enjoy','pleasure','nice','agreeable','satisfy','gratify','fun','happy','awesome','incred','impress','astonish','magnific','love']
+        h=['sad','disagree','irksome','troublesome','annoy','irrit','vexati','displeas','uncomfort','distress','appal','dread','hate','detest','offens','obnoxi','repugn','repuls','revolt','disgust','distast']
+        i=['great','good','positive','awesome']
+        j=['bad','nasty','horrible','terrible','worst','miserable','awful']
+        k=['friendl',',pleasure']
         
         if(query in a):
             return a;
@@ -370,6 +369,8 @@ class Search_View(TemplateView):
             return i;
         if(query in j):
             return j;
+        if(query in k):
+            return k;
         return None;
     
     def searchDocument(query,filter_query,page,rows,filter_query_companyname):
@@ -378,23 +379,23 @@ class Search_View(TemplateView):
             processed_query = preprocessor.process(query)
             tfidf_query = Search_View.tfidf_ltclnc_query_builder(processed_query)
             
-            company_name_boost = 10
+            company_name_boost = 6
             competitors_boost = 0.3
             interview_boost = 1
             industry_boost = 1
             pros_boost = 1
             cons_boost = 1
             title_boost = 1
-            position_boost = 6
-            if(any(x in processed_query for x in ['competitor', 'rival', 'challeng', 'oppon', 'oppos', 'adversari', 'antagonist', 'combat', 'enemi', 'foe', 'competit', 'opposit'])):
+            position_boost = 5
+            if(any(x in processed_query for x in ['competitor','rival','enemy','foe'])):
                 competitors_boost=3
-            if(any(x in processed_query for x in ['industri', 'busi', 'trade', 'field', 'line'])):
+            if(any(x in processed_query for x in ['industry','field'])):
                 industry_boost=3
             if(any(x in processed_query for x in ['interview'])):
                 interview_boost=5
-            if(any(x in processed_query for x in ['pro', 'strength', 'benefit'])):
+            if(any(x in processed_query for x in ['pro','strength','benefit','positive'])):
                 pros_boost=3
-            if(any(x in processed_query for x in ['con', 'weak', 'neg', 'disadvantag'])):
+            if(any(x in processed_query for x in ['con','weak','negative','disadvantage'])):
                 cons_boost=3
            
             
@@ -412,7 +413,7 @@ class Search_View(TemplateView):
                 fieldboost.append('interview_question_tag^'+str(interview_boost))
                 fieldboost.append('position_tag^'+str(position_boost))
                 fieldboost.append('pros_tag^'+str(pros_boost))
-                fieldboost.append('review_description_tag^1')
+                fieldboost.append('review_description_tag^'+str(max(pros_boost,cons_boost)))
                 fieldboost.append('title_tag^'+str(title_boost))
                 fieldboost.append('competitors_tag^'+str(competitors_boost))
                 #params.append('q=+'+tfidf_query)
@@ -433,7 +434,7 @@ class Search_View(TemplateView):
             fieldboost.append('interview_question^'+str(interview_boost))
             fieldboost.append('position^'+str(position_boost))
             fieldboost.append('pros^'+str(pros_boost))
-            fieldboost.append('review_description^1')
+            fieldboost.append('review_description_tag^'+str(max(pros_boost,cons_boost)))
             fieldboost.append('title^'+str(title_boost))
             fieldboost.append('competitors^'+str(competitors_boost))
             fieldboost = '+'.join(fieldboost)  
@@ -443,6 +444,7 @@ class Search_View(TemplateView):
         else:
             params = []
             params.append('q=*:*')
+            params.append('sort=datetime_s desc')
             
         params.append('start='+str((int(page)-1)*int(rows)))
         params.append('wt=json')
