@@ -17,6 +17,9 @@ SOLR_URL = 'http://127.0.0.1:8983/solr/irproject/'
 
 CORENLP = r'C:\Users\ShaoJie\Desktop\IR Pre-processing\stanford-corenlp-full-2018-02-27'
 
+Ensure ./crawled_data/Company exist in the django project folder
+
+Ensure IRProject/solr config/server/irproject/conf (from this clone) is copied to ./solr-7.2.1/server/solr/irproject/
 
 Modules:
 myapp  (webapp module),
